@@ -3,107 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil | Charlys</title>
+    <title>Charlys | Official Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #ff4b2b;
+            --secondary: #00d2ff;
+            --bg: #050505;
+        }
+
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0f0f0f; /* Fundo escuro estilo gamer/noturno */
-            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);
+            color: white;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+
         .card {
-            background: #1a1a1a;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             width: 90%;
-            max-width: 380px;
-            padding: 40px 20px;
+            max-width: 400px;
+            padding: 30px;
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             text-align: center;
-            border: 1px solid #333;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
-        .profile-initial {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+
+        .profile-img {
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            object-fit: cover;
+        }
+
+        h1 { margin: 10px 0 5px; font-size: 28px; letter-spacing: 2px; }
+        .username { color: var(--secondary); font-size: 14px; margin-bottom: 20px; display: block; }
+
+        .bio { font-size: 14px; color: #ccc; line-height: 1.5; margin-bottom: 25px; }
+
+        /* Barras de Skills */
+        .skill-container { text-align: left; margin-bottom: 25px; }
+        .skill-label { font-size: 12px; text-transform: uppercase; margin-bottom: 5px; display: block; color: #888; }
+        .skill-bar { height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-bottom: 12px; }
+        .skill-progress { height: 100%; background: linear-gradient(90deg, var(--primary), #ff416c); width: 0; transition: width 2s; }
+
+        .links-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .btn {
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 35px;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 75, 43, 0.3);
-        }
-        h1 { font-size: 26px; margin: 10px 0; letter-spacing: 1px; }
-        .info-sub { color: #888; font-size: 14px; margin-bottom: 25px; }
-        
-        .bio {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #ccc;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            gap: 8px;
         }
 
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        .tag {
-            background: #333;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid #444;
-        }
+        .btn-insta { background: #E1306C; color: white; }
+        .btn-whats { background: #25D366; color: white; }
+        .btn-full { grid-column: span 2; background: white; color: black; margin-top: 5px; }
 
-        .btn-link {
-            display: block;
-            background: #ffffff;
-            color: #000;
-            text-decoration: none;
-            padding: 15px;
-            border-radius: 15px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .btn-link:hover {
-            background: #ff4b2b;
-            color: #fff;
-            transform: translateY(-3px);
-        }
+        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        .footer-info { margin-top: 25px; font-size: 12px; color: #555; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="profile-initial">C</div>
-
-    <h1>Charlys</h1>
-    <p class="info-sub">17 anos | Enthusiast & Gamer</p>
+    <img src="https://via.placeholder.com/150" alt="Charlys" class="profile-img">
+    
+    <h1>CHARLYS</h1>
+    <span class="username">@inimigo_do_amigo.ofc</span>
 
     <p class="bio">
-        Focado no mundo dos games e apaixonado pela liberdade das motocicletas. 
-        Aprecio a constância de um bom café (na garrafa, claro!) e busco sempre evoluir 
-        minhas habilidades, seja nos servidores ou na estrada.
+        Piloto de <b>CG Titan 98</b> nas horas vagas e profissional em cruzar o mapa no <b>ETS2</b> e tocar o terror no <b>GTA V</b>. Café na garrafa é lei. ☕️
     </p>
 
-    <div class="tags">
-        <span class="tag">🎮 Games</span>
-        <span class="tag">🏍️ Motocicletas</span>
-        <span class="tag">☕ Café na Garrafa</span>
-        <span class="tag">🚀 E-sports</span>
+    <div class="skill-container">
+        <span class="skill-label">Humor & Resenha</span>
+        <div class="skill-bar"><div class="skill-progress" style="width: 95%;"></div></div>
+        
+        <span class="skill-label">Compreensão & Amizade</span>
+        <div class="skill-bar"><div class="skill-progress" style="width: 100%;"></div></div>
+
+        <span class="skill-label">Skill no Volante/Guidão</span>
+        <div class="skill-bar"><div class="skill-progress" style="width: 85%;"></div></div>
     </div>
 
-    <a href="SEU_LINK_AQUI" class="btn-link">Conecte-se comigo</a>
+    <div class="links-grid">
+        <a href="https://instagram.com/inimigo_do_amigo.ofc" class="btn btn-insta" target="_blank">
+            <i class="fab fa-instagram"></i> Instagram
+        </a>
+        <a href="https://wa.me/5569992919920" class="btn btn-whats" target="_blank">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+        <a href="#" class="btn btn-full">
+            <i class="fas fa-gamepad"></i> Ver Setup de Games
+        </a>
+    </div>
+
+    <div class="footer-info">
+        📍 17 Anos | 🏍️ Titan 98 | ☕ Café na Garrafa
+    </div>
 </div>
 
 </body>
