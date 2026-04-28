@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN_WARP_SPEED_V13</title>
+    <title>TITAN_WARP_SPEED_V15</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet">
@@ -98,7 +98,7 @@
 
     <div class="wrapper" id="mainMenu">
         <header>
-            <h1 style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 5px; color: var(--p);">TITAN_WARP_SPEED // V13</h1>
+            <h1 style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 5px; color: var(--p);">TITAN_WARP_SPEED // V15</h1>
         </header>
 
         <section class="profile-area">
@@ -251,7 +251,6 @@
             }, { once: true });
         }
 
-        // --- GAME ENGINE V13 (COM CAMINHO) ---
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
         let playing = false, score = 0, py = 0, pv = 0, obstacles = [], frame = 0;
@@ -264,7 +263,6 @@
         }
 
         function drawRoad(floor, color) {
-            // Desenha a base da estrada
             gCtx.fillStyle = "rgba(20, 20, 25, 0.8)";
             gCtx.beginPath();
             gCtx.moveTo(0, floor);
@@ -273,7 +271,6 @@
             gCtx.lineTo(0, gCanvas.height);
             gCtx.fill();
 
-            // Linha de borda superior (Neon)
             gCtx.strokeStyle = color;
             gCtx.lineWidth = 3 * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pulse'));
             gCtx.beginPath();
@@ -281,10 +278,9 @@
             gCtx.lineTo(gCanvas.width, floor);
             gCtx.stroke();
 
-            // Linhas de movimento (Caminho)
             gCtx.strokeStyle = color;
             gCtx.lineWidth = 1;
-            roadOffset += 15; // Velocidade do chão
+            roadOffset += 15;
             if(roadOffset > 100) roadOffset = 0;
 
             for(let x = -roadOffset; x < gCanvas.width; x += 80) {
@@ -297,28 +293,35 @@
             }
         }
 
+        function jump() {
+            // SÓ PULA SE ESTIVER NO CHÃO (py == 0)
+            if(playing && py === 0) {
+                pv = -22; 
+            }
+        }
+
         function gameLoop() {
             if(!playing) return;
             gCanvas.width = window.innerWidth; 
             gCanvas.height = window.innerHeight;
             
-            let floor = gCanvas.height * 0.75; // Fixa o chão em 75% da altura
+            let floor = gCanvas.height * 0.75; 
             let color = getComputedStyle(document.documentElement).getPropertyValue('--p');
             
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
             
             drawRoad(floor, color);
 
-            pv += 0.9; py += pv;
+            pv += 1.1; // Gravidade
+            py += pv;
             if(py > 0) { py = 0; pv = 0; }
 
             // Moto
             gCtx.save();
-            gCtx.font = "50px Arial";
+            gCtx.font = "80px Arial";
             gCtx.shadowBlur = 15;
             gCtx.shadowColor = color;
-            // Posiciona a moto exatamente sobre a linha do chão
-            gCtx.translate(100, floor + py - 5); 
+            gCtx.translate(120, floor + py - 5); 
             gCtx.scale(-1, 1);
             gCtx.fillText("🏍️", 0, 0);
             gCtx.restore();
@@ -328,16 +331,17 @@
             
             obstacles.forEach((o, i) => {
                 o.x -= 12;
+                gCtx.font = "80px Arial";
                 gCtx.shadowBlur = 10;
                 gCtx.fillText(o.type, o.x, floor - 5);
                 
-                // Colisão ajustada para o novo chão
-                if(o.x > 60 && o.x < 120 && py > -40) {
+                // Colisão
+                if(o.x > 40 && o.x < 130 && py > -60) {
                     playing = false;
                     document.getElementById('boot').style.display = 'flex';
                 }
                 
-                if(o.x < -100) { obstacles.splice(i, 1); score += 100; }
+                if(o.x < -150) { obstacles.splice(i, 1); score += 100; }
             });
 
             document.getElementById('score').innerText = score.toString().padStart(4, '0');
@@ -345,9 +349,10 @@
             requestAnimationFrame(gameLoop);
         }
 
-        window.addEventListener('touchstart', () => { if(playing) pv = -18; });
-        window.addEventListener('mousedown', () => { if(playing) pv = -18; });
-        window.onresize = () => { initStars(); initStars(); };
+        // Eventos de Toque/Clique corrigidos para chamar a função jump()
+        window.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); }, {passive: false});
+        window.addEventListener('mousedown', jump);
+        window.onresize = () => { initStars(); };
     </script>
 </body>
 </html>
