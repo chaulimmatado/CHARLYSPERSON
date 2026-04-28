@@ -32,6 +32,7 @@
             filter: drop-shadow(0 0 5px var(--p));
         }
 
+        /* --- WRAPPER E MENUS --- */
         .wrapper {
             display: flex;
             flex-direction: column;
@@ -40,6 +41,13 @@
             gap: 15px;
             max-width: 1200px;
             margin: 0 auto;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Esconde o menu quando o jogo inicia */
+        .menu-hidden {
+            transform: translateY(-120%);
+            pointer-events: none;
         }
 
         header {
@@ -66,10 +74,7 @@
             cursor: pointer;
             transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: var(--glow);
-            position: relative;
         }
-
-        .photo-frame:hover { transform: scale(1.1) rotate(5deg); border-color: var(--s); }
 
         .photo-frame img {
             width: 100%; height: 100%;
@@ -94,54 +99,55 @@
             text-decoration: none;
             text-align: center;
             font-size: 11px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         .cyber-btn:hover {
             background: var(--p);
             color: #000;
             box-shadow: 0 0 30px var(--p);
-            transform: translateY(-3px);
         }
 
+        /* --- VIEWPORT DO JOGO --- */
         .game-viewport {
-            flex: 1;
+            position: fixed;
+            inset: 0;
             background: #000;
-            border: 2px solid var(--p);
-            border-radius: 8px;
-            position: relative;
-            box-shadow: inset 0 0 50px rgba(0,242,255,0.2);
-            overflow: hidden;
+            z-index: 100;
+            display: none; /* Só aparece quando o jogo começa */
         }
 
         #game-canvas { width: 100%; height: 100%; }
 
         .game-ui {
-            position: absolute; top: 15px; width: 100%;
-            padding: 0 20px; display: flex; justify-content: space-between;
+            position: absolute; top: 20px; width: 100%;
+            padding: 0 30px; display: flex; justify-content: space-between;
             font-family: 'Orbitron'; pointer-events: none;
-            z-index: 5;
+            z-index: 110;
         }
 
-        .mobile-jump-zone {
-            display: none;
-            position: absolute; inset: 0;
-            z-index: 10;
+        /* Botão Sair dentro do Jogo */
+        .exit-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            z-index: 120;
+            font-size: 10px;
+            opacity: 0.6;
         }
-
-        @media (max-width: 768px) {
-            .mobile-jump-zone { display: block; }
-            .links-grid { grid-template-columns: 1fr; }
-        }
+        .exit-btn:hover { opacity: 1; }
 
         .overlay {
             position: absolute; inset: 0;
             background: rgba(0,0,0,0.9);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 20;
+            z-index: 130;
+        }
+
+        @media (max-width: 768px) {
+            .links-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -149,13 +155,13 @@
 
     <canvas id="particle-canvas"></canvas>
 
-    <div class="wrapper">
+    <div class="wrapper" id="mainMenu">
         <header>
             <h1 style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 5px; color: var(--p);">TITAN_NEURAL_STORM // V11</h1>
         </header>
 
         <section class="profile-area">
-            <div class="photo-frame" onclick="changeTheme()" title="Mudar cor do sistema">
+            <div class="photo-frame" onclick="changeTheme()">
                 <img src="20260207_132012[1].jpg" alt="Charlys">
             </div>
             <h2 style="font-family: 'Orbitron'; margin-top: 15px; letter-spacing: 2px;">CHARLYS</h2>
@@ -168,21 +174,29 @@
                     <i class="fas fa-broadcast-tower"></i> <span id="radioStatus">RADIO</span>
                 </div>
             </div>
+
+            <button onclick="enterGameMode()" class="cyber-btn" style="width: 100%; margin-top: 20px; border-width: 2px; font-weight: 900;">
+                <i class="fas fa-gamepad"></i> INICIAR_SESSAO_TITAN
+            </button>
         </section>
+    </div>
 
-        <div class="game-viewport" id="gameBox">
-            <div class="game-ui">
-                <div style="color: var(--p);">SCORE: <span id="score">0000</span></div>
-                <div style="color: var(--s);">FPS: <span id="fps">120</span></div>
-            </div>
-            
-            <canvas id="game-canvas"></canvas>
-            <div class="mobile-jump-zone" id="touchZone"></div>
+    <div class="game-viewport" id="gameScreen">
+        <div class="game-ui">
+            <div style="color: var(--p);">SCORE: <span id="score">0000</span></div>
+            <div style="color: var(--s);">FPS: <span id="fps">120</span></div>
+        </div>
 
-            <div id="boot" class="overlay">
-                <h2 style="font-family:'Orbitron'; color: var(--p); margin-bottom: 20px;">SYSTEM_READY</h2>
-                <button onclick="startGame()" class="cyber-btn" style="width: 200px;">ENGAGE_TITAN</button>
-            </div>
+        <canvas id="game-canvas"></canvas>
+
+        <button onclick="exitGameMode()" class="cyber-btn exit-btn">
+            <i class="fas fa-times"></i> SAIR_DO_SISTEMA
+        </button>
+
+        <div id="boot" class="overlay">
+            <h2 style="font-family:'Orbitron'; color: var(--p); margin-bottom: 20px;">LINK_START</h2>
+            <button onclick="startGame()" class="cyber-btn" style="width: 200px;">ENGAGE_TITAN</button>
+            <p style="font-size: 8px; margin-top: 20px; color: #555;">Dica: Gire o celular para horizontal</p>
         </div>
     </div>
 
@@ -211,6 +225,39 @@
             }
         }
 
+        // --- SISTEMA DE NAVEGAÇÃO ---
+
+        function enterGameMode() {
+            const screen = document.getElementById('gameScreen');
+            const menu = document.getElementById('mainMenu');
+            
+            screen.style.display = 'block';
+            menu.classList.add('menu-hidden');
+
+            // Tenta colocar em tela cheia e travar horizontal (apenas Android/Chrome mobile aceita o lock)
+            if (screen.requestFullscreen) {
+                screen.requestFullscreen().then(() => {
+                    if (window.screen.orientation && window.screen.orientation.lock) {
+                        window.screen.orientation.lock('landscape').catch(() => {});
+                    }
+                });
+            }
+        }
+
+        function exitGameMode() {
+            playing = false;
+            const screen = document.getElementById('gameScreen');
+            const menu = document.getElementById('mainMenu');
+            
+            screen.style.display = 'none';
+            menu.classList.remove('menu-hidden');
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        // --- MOTOR DE PARTÍCULAS ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let particles = [];
@@ -220,7 +267,7 @@
             pCanvas.width = window.innerWidth;
             pCanvas.height = window.innerHeight;
             particles = [];
-            for(let i=0; i<80; i++) {
+            for(let i=0; i<60; i++) {
                 particles.push({
                     x: Math.random() * pCanvas.width,
                     y: Math.random() * pCanvas.height,
@@ -240,14 +287,6 @@
                 p.x += p.vx; p.y += p.vy;
                 if(p.x < 0 || p.x > pCanvas.width) p.vx *= -1;
                 if(p.y < 0 || p.y > pCanvas.height) p.vy *= -1;
-                let dx = mouse.x - p.x;
-                let dy = mouse.y - p.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if(dist < 150) {
-                    p.x += dx * 0.02; p.y += dy * 0.02;
-                    pCtx.beginPath(); pCtx.moveTo(p.x, p.y); pCtx.lineTo(mouse.x, mouse.y);
-                    pCtx.globalAlpha = 0.2; pCtx.stroke(); pCtx.globalAlpha = 1;
-                }
                 pCtx.beginPath(); pCtx.arc(p.x, p.y, p.size, 0, Math.PI*2); pCtx.fill();
             });
             requestAnimationFrame(animateParticles);
@@ -258,9 +297,9 @@
         function changeTheme() {
             currentTheme = (currentTheme + 1) % themes.length;
             document.documentElement.style.setProperty('--p', themes[currentTheme]);
-            initParticles();
         }
 
+        // --- TITAN GAME ENGINE ---
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
         let playing = false, score = 0, py = 0, pv = 0, obstacles = [], frame = 0;
@@ -269,64 +308,56 @@
         function startGame() {
             playing = true; score = 0; obstacles = []; py = 0; pv = 0; frame = 0;
             document.getElementById('boot').style.display = 'none';
-            if(!radioPlaying) toggleRadio();
             gameLoop();
         }
 
-        function gameJump() { if(py === 0 && playing) pv = -16; }
+        function gameJump() { if(py === 0 && playing) pv = -18; }
 
         function gameLoop() {
             if(!playing) return;
             
-            const parent = gCanvas.parentElement;
-            gCanvas.width = parent.offsetWidth;
-            gCanvas.height = parent.offsetHeight;
+            gCanvas.width = window.innerWidth;
+            gCanvas.height = window.innerHeight;
             
-            let floor = gCanvas.height - 50;
+            let floor = gCanvas.height - 60;
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
 
-            // Gravidade e Pulo
-            pv += 0.8; py += pv;
+            pv += 0.9; py += pv;
             if(py > 0) { py = 0; pv = 0; }
 
-            // Desenhar Moto (Corrigida e com tamanho fixo)
+            // Moto
             gCtx.save();
-            gCtx.font = "45px Arial";
-            gCtx.shadowBlur = 15;
-            gCtx.shadowColor = themes[currentTheme];
-            gCtx.translate(70, floor + py);
+            gCtx.font = "50px Arial";
+            gCtx.translate(100, floor + py);
             gCtx.scale(-1, 1);
             gCtx.fillText("🏍️", 0, 0);
             gCtx.restore();
 
-            // Gerar Obstáculos Variados
-            if(frame % 90 === 0) {
+            // Obstáculos
+            if(frame % 70 === 0) {
                 obstacles.push({ 
                     x: gCanvas.width, 
                     type: obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)] 
                 });
             }
 
-            // Mover e Desenhar Obstáculos
             obstacles.forEach((o, i) => {
-                o.x -= (7 + score/1500);
-                
-                gCtx.font = "40px Arial"; // Tamanho garantido dos obstáculos
-                gCtx.shadowBlur = 5;
-                gCtx.shadowColor = "red";
+                o.x -= (8 + score/1000);
+                gCtx.font = "45px Arial";
                 gCtx.fillText(o.type, o.x, floor);
 
-                // Colisão Refinada
-                if(o.x > 20 && o.x < 70 && py > -30) {
+                // Colisão
+                if(o.x > 50 && o.x < 110 && py > -40) {
                     playing = false;
                     document.getElementById('boot').style.display = 'flex';
-                    document.getElementById('boot').innerHTML = `<h2 style="color:var(--s); font-family:'Orbitron'">CRASHED</h2><p style="margin:10px">SCORE: ${score}</p><button onclick="startGame()" class="cyber-btn">REBOOT</button>`;
+                    document.getElementById('boot').innerHTML = `
+                        <h2 style="color:var(--s); font-family:'Orbitron'">CRASHED</h2>
+                        <p style="margin:10px">SCORE: ${score}</p>
+                        <button onclick="startGame()" class="cyber-btn" style="width:200px">REBOOT</button>
+                        <button onclick="exitGameMode()" class="cyber-btn" style="width:200px; margin-top:10px; border-color:#555; color:#555">VOLTAR_MENU</button>
+                    `;
                 }
-
-                if(o.x < -50) { 
-                    obstacles.splice(i, 1); 
-                    score += 100; 
-                }
+                if(o.x < -100) { obstacles.splice(i, 1); score += 100; }
             });
 
             document.getElementById('score').innerText = score.toString().padStart(4, '0');
@@ -334,8 +365,8 @@
             requestAnimationFrame(gameLoop);
         }
 
-        window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('touchstart', e => { gameJump(); });
+        // Eventos
+        window.addEventListener('touchstart', e => { if(playing) gameJump(); });
         window.addEventListener('keydown', e => { if(e.code === 'Space') gameJump(); });
         window.onresize = initParticles;
 
