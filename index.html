@@ -10,7 +10,7 @@
 
     <style>
         :root {
-            --p: #00f2ff; /* Cor inicial: Ciano */
+            --p: #00f2ff;
             --s: #ff0055;
             --bg: #030305;
             --glow: 0 0 25px var(--p);
@@ -27,13 +27,11 @@
             transition: background 0.5s ease;
         }
 
-        /* --- BACKGROUND DE PARTÍCULAS MAGNÉTICAS --- */
         #particle-canvas {
             position: fixed; top: 0; left: 0; z-index: -1;
             filter: drop-shadow(0 0 5px var(--p));
         }
 
-        /* --- LAYOUT PRINCIPAL --- */
         .wrapper {
             display: flex;
             flex-direction: column;
@@ -44,7 +42,6 @@
             margin: 0 auto;
         }
 
-        /* --- HEADER --- */
         header {
             background: rgba(0,0,0,0.8);
             border: 1px solid var(--p);
@@ -54,7 +51,6 @@
             border-radius: 4px;
         }
 
-        /* --- PERFIL INTERATIVO (O COMANDANTE) --- */
         .profile-area {
             display: flex;
             flex-direction: column;
@@ -74,7 +70,6 @@
         }
 
         .photo-frame:hover { transform: scale(1.1) rotate(5deg); border-color: var(--s); }
-        .photo-frame:active { transform: scale(0.9); }
 
         .photo-frame img {
             width: 100%; height: 100%;
@@ -82,7 +77,6 @@
             object-fit: cover;
         }
 
-        /* --- BOTÕES COM EFEITO MOUSE E GLOW --- */
         .links-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -113,7 +107,6 @@
             transform: translateY(-3px);
         }
 
-        /* --- MOTOR DE JOGO ADAPTATIVO --- */
         .game-viewport {
             flex: 1;
             background: #000;
@@ -130,9 +123,9 @@
             position: absolute; top: 15px; width: 100%;
             padding: 0 20px; display: flex; justify-content: space-between;
             font-family: 'Orbitron'; pointer-events: none;
+            z-index: 5;
         }
 
-        /* BOTÃO DE SALTO TOUCH (SÓ MOBILE) */
         .mobile-jump-zone {
             display: none;
             position: absolute; inset: 0;
@@ -144,14 +137,12 @@
             .links-grid { grid-template-columns: 1fr; }
         }
 
-        /* MENSAGEM DE START */
         .overlay {
             position: absolute; inset: 0;
             background: rgba(0,0,0,0.9);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 20;
         }
-
     </style>
 </head>
 <body onload="initSystem()">
@@ -164,7 +155,7 @@
         </header>
 
         <section class="profile-area">
-            <div class="photo-frame" onclick="changeTheme()" title="Clique para mudar a cor do sistema!">
+            <div class="photo-frame" onclick="changeTheme()" title="Mudar cor do sistema">
                 <img src="20260207_132012[1].jpg" alt="Charlys">
             </div>
             <h2 style="font-family: 'Orbitron'; margin-top: 15px; letter-spacing: 2px;">CHARLYS</h2>
@@ -172,10 +163,8 @@
             <div class="links-grid">
                 <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="cyber-btn"><i class="fab fa-instagram"></i> INSTAGRAM</a>
                 <a href="https://wa.me/5569992919920" target="_blank" class="cyber-btn"><i class="fab fa-whatsapp"></i> WHATSAPP</a>
-                
-                <a href="https://discord.gg/Hgz4j5XXv" target="_blank" class="cyber-btn" style="grid-column: span 1;"><i class="fab fa-discord"></i> DISCORD</a>
-
-                <div id="radioBtn" onclick="toggleRadio()" class="cyber-btn" style="grid-column: span 1;">
+                <a href="https://discord.gg/Hgz4j5XXv" target="_blank" class="cyber-btn"><i class="fab fa-discord"></i> DISCORD</a>
+                <div id="radioBtn" onclick="toggleRadio()" class="cyber-btn">
                     <i class="fas fa-broadcast-tower"></i> <span id="radioStatus">RADIO</span>
                 </div>
             </div>
@@ -202,14 +191,13 @@
     </audio>
 
     <script>
-        // --- CONTROLE DA RÁDIO ---
         const radio = document.getElementById('cyberRadio');
         const radioStatus = document.getElementById('radioStatus');
         let radioPlaying = false;
 
         function toggleRadio() {
             if (!radioPlaying) {
-                radio.play().catch(e => console.log("Erro ao iniciar áudio."));
+                radio.play().catch(() => {});
                 radioStatus.innerText = "RADIO_ON";
                 radioPlaying = true;
                 document.getElementById('radioBtn').style.borderColor = "var(--s)";
@@ -223,7 +211,6 @@
             }
         }
 
-        // --- MOTOR DE PARTÍCULAS ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let particles = [];
@@ -233,7 +220,7 @@
             pCanvas.width = window.innerWidth;
             pCanvas.height = window.innerHeight;
             particles = [];
-            for(let i=0; i<120; i++) {
+            for(let i=0; i<80; i++) {
                 particles.push({
                     x: Math.random() * pCanvas.width,
                     y: Math.random() * pCanvas.height,
@@ -249,12 +236,10 @@
             let color = getComputedStyle(document.documentElement).getPropertyValue('--p');
             pCtx.fillStyle = color;
             pCtx.strokeStyle = color;
-
             particles.forEach(p => {
                 p.x += p.vx; p.y += p.vy;
                 if(p.x < 0 || p.x > pCanvas.width) p.vx *= -1;
                 if(p.y < 0 || p.y > pCanvas.height) p.vy *= -1;
-
                 let dx = mouse.x - p.x;
                 let dy = mouse.y - p.y;
                 let dist = Math.sqrt(dx*dx + dy*dy);
@@ -268,7 +253,6 @@
             requestAnimationFrame(animateParticles);
         }
 
-        // --- TROCA DE TEMA ---
         const themes = ['#00f2ff', '#ff0055', '#bcff00', '#ffaa00', '#a200ff'];
         let currentTheme = 0;
         function changeTheme() {
@@ -277,62 +261,81 @@
             initParticles();
         }
 
-        // --- TITAN GAME ENGINE ---
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
         let playing = false, score = 0, py = 0, pv = 0, obstacles = [], frame = 0;
+        const obstacleTypes = ["🚧", "🧱", "💣", "🛸", "🔥"];
 
         function startGame() {
-            playing = true; score = 0; obstacles = []; py = 0;
+            playing = true; score = 0; obstacles = []; py = 0; pv = 0; frame = 0;
             document.getElementById('boot').style.display = 'none';
             if(!radioPlaying) toggleRadio();
             gameLoop();
         }
 
-        function gameJump() { if(py === 0 && playing) pv = -15; }
+        function gameJump() { if(py === 0 && playing) pv = -16; }
 
         function gameLoop() {
             if(!playing) return;
-            gCanvas.width = gCanvas.parentElement.offsetWidth;
-            gCanvas.height = gCanvas.parentElement.offsetHeight;
+            
+            const parent = gCanvas.parentElement;
+            gCanvas.width = parent.offsetWidth;
+            gCanvas.height = parent.offsetHeight;
+            
             let floor = gCanvas.height - 50;
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
 
+            // Gravidade e Pulo
             pv += 0.8; py += pv;
             if(py > 0) { py = 0; pv = 0; }
 
-            // MOTO CORRIGIDA (Refletida horizontalmente para olhar para a direita)
+            // Desenhar Moto (Corrigida e com tamanho fixo)
             gCtx.save();
-            gCtx.shadowBlur = 20; 
+            gCtx.font = "45px Arial";
+            gCtx.shadowBlur = 15;
             gCtx.shadowColor = themes[currentTheme];
-            gCtx.font = "40px Arial";
-            gCtx.translate(50 + 20, floor + py - 20); // Move para o centro da moto
-            gCtx.scale(-1, 1); // Inverte o eixo X para a moto olhar para a direita
-            gCtx.fillText("🏍️", -20, 20); 
+            gCtx.translate(70, floor + py);
+            gCtx.scale(-1, 1);
+            gCtx.fillText("🏍️", 0, 0);
             gCtx.restore();
 
-            // OBSTÁCULOS
-            if(frame % 80 === 0) obstacles.push({ x: gCanvas.width });
+            // Gerar Obstáculos Variados
+            if(frame % 90 === 0) {
+                obstacles.push({ 
+                    x: gCanvas.width, 
+                    type: obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)] 
+                });
+            }
+
+            // Mover e Desenhar Obstáculos
             obstacles.forEach((o, i) => {
-                o.x -= (8 + score/1000);
-                gCtx.fillText("🚧", o.x, floor);
-                if(o.x > 30 && o.x < 70 && py > -25) {
+                o.x -= (7 + score/1500);
+                
+                gCtx.font = "40px Arial"; // Tamanho garantido dos obstáculos
+                gCtx.shadowBlur = 5;
+                gCtx.shadowColor = "red";
+                gCtx.fillText(o.type, o.x, floor);
+
+                // Colisão Refinada
+                if(o.x > 20 && o.x < 70 && py > -30) {
                     playing = false;
                     document.getElementById('boot').style.display = 'flex';
-                    document.getElementById('boot').innerHTML = `<h2 style="color:var(--s)">CRASHED</h2><button onclick="startGame()" class="cyber-btn">REBOOT</button>`;
+                    document.getElementById('boot').innerHTML = `<h2 style="color:var(--s); font-family:'Orbitron'">CRASHED</h2><p style="margin:10px">SCORE: ${score}</p><button onclick="startGame()" class="cyber-btn">REBOOT</button>`;
                 }
-                if(o.x < -50) { obstacles.splice(i, 1); score += 100; }
+
+                if(o.x < -50) { 
+                    obstacles.splice(i, 1); 
+                    score += 100; 
+                }
             });
 
             document.getElementById('score').innerText = score.toString().padStart(4, '0');
-            frame++; requestAnimationFrame(gameLoop);
+            frame++; 
+            requestAnimationFrame(gameLoop);
         }
 
         window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('touchstart', e => { 
-            mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; 
-            gameJump(); 
-        });
+        window.addEventListener('touchstart', e => { gameJump(); });
         window.addEventListener('keydown', e => { if(e.code === 'Space') gameJump(); });
         window.onresize = initParticles;
 
