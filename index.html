@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TITAN_WARP_SPEED_V12</title>
+    <title>TITAN_WARP_SPEED_V13</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
             --s: #ff0055;
             --bg: #030305;
             --glow: 0 0 25px var(--p);
-            --pulse: 1; /* Variável controlada pelo JS */
+            --pulse: 1;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,9 +27,7 @@
             overflow: hidden;
         }
 
-        #particle-canvas {
-            position: fixed; top: 0; left: 0; z-index: -1;
-        }
+        #particle-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
         .wrapper {
             display: flex; flex-direction: column; height: 100vh;
@@ -44,7 +42,7 @@
             border: 1px solid var(--p);
             padding: 15px; text-align: center;
             box-shadow: var(--glow); border-radius: 4px;
-            transform: scale(var(--pulse)); /* Reage ao som */
+            transform: scale(var(--pulse));
         }
 
         .profile-area { display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -55,7 +53,7 @@
             border: 4px solid var(--p);
             padding: 5px; cursor: pointer;
             box-shadow: var(--glow);
-            transform: scale(var(--pulse)); /* Reage ao som */
+            transform: scale(var(--pulse));
             transition: border-color 0.3s;
         }
 
@@ -100,7 +98,7 @@
 
     <div class="wrapper" id="mainMenu">
         <header>
-            <h1 style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 5px; color: var(--p);">TITAN_WARP_SPEED // V12</h1>
+            <h1 style="font-family: 'Orbitron'; font-size: 14px; letter-spacing: 5px; color: var(--p);">TITAN_WARP_SPEED // V13</h1>
         </header>
 
         <section class="profile-area">
@@ -147,7 +145,6 @@
         let radioPlaying = false;
         let audioCtx, analyzer, dataArray, source;
 
-        // --- SISTEMA DE ÁUDIO ANALYZER ---
         function setupAudioAnalysis() {
             if (audioCtx) return;
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -162,15 +159,11 @@
 
         function analyze() {
             analyzer.getByteFrequencyData(dataArray);
-            // Pega a média dos graves (primeiras barras do espectro)
             let sum = 0;
             for(let i=0; i<10; i++) sum += dataArray[i];
             let avg = sum / 10;
-            
-            // Converte para um multiplicador de escala (1.0 a 1.2)
             let scale = 1 + (avg / 255) * 0.3;
             document.documentElement.style.setProperty('--pulse', scale);
-            
             requestAnimationFrame(analyze);
         }
 
@@ -187,7 +180,6 @@
             }
         }
 
-        // --- EFEITO STARFIELD (VELOCIDADE DO SOM) ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let stars = [];
@@ -201,35 +193,27 @@
                 stars.push({
                     x: Math.random() * pCanvas.width - pCanvas.width/2,
                     y: Math.random() * pCanvas.height - pCanvas.height/2,
-                    z: Math.random() * pCanvas.width,
-                    o: Math.random()
+                    z: Math.random() * pCanvas.width
                 });
             }
         }
 
         function animateStars() {
-            pCtx.fillStyle = "rgba(3, 3, 5, 0.2)"; // Rastro leve
+            pCtx.fillStyle = "rgba(3, 3, 5, 0.3)";
             pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
-            
             let color = getComputedStyle(document.documentElement).getPropertyValue('--p');
             pCtx.fillStyle = color;
-
             stars.forEach(s => {
-                s.z -= 15; // Velocidade de aproximação
+                s.z -= 15;
                 if(s.z <= 0) s.z = pCanvas.width;
-
                 let sx = (s.x / s.z) * pCanvas.width + pCanvas.width/2;
                 let sy = (s.y / s.z) * pCanvas.height + pCanvas.height/2;
                 let size = (1 - s.z / pCanvas.width) * 3;
-
-                pCtx.beginPath();
-                pCtx.arc(sx, sy, size, 0, Math.PI*2);
-                pCtx.fill();
+                pCtx.beginPath(); pCtx.arc(sx, sy, size, 0, Math.PI*2); pCtx.fill();
             });
             requestAnimationFrame(animateStars);
         }
 
-        // --- MUDANÇA DE TEMA ---
         const themes = ['#00f2ff', '#ff0055', '#bcff00', '#ffaa00', '#a200ff'];
         let currentTheme = 0;
         function changeTheme() {
@@ -237,12 +221,15 @@
             document.documentElement.style.setProperty('--p', themes[currentTheme]);
         }
 
-        // --- FUNÇÕES DE JOGO E NAVEGAÇÃO ---
         function enterGameMode() {
             const screen = document.getElementById('gameScreen');
             const menu = document.getElementById('mainMenu');
             screen.style.display = 'block';
             menu.classList.add('menu-hidden');
+            setTimeout(() => {
+                gCanvas.width = window.innerWidth;
+                gCanvas.height = window.innerHeight;
+            }, 100);
             if (screen.requestFullscreen) screen.requestFullscreen();
         }
 
@@ -253,12 +240,9 @@
             if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
         }
 
-        // Inicia tudo
         function initSystem() {
             initStars();
             animateStars();
-            
-            // Autoplay da rádio (necessita interação para o AudioContext)
             window.addEventListener('click', () => {
                 if(!radioPlaying) {
                     setupAudioAnalysis();
@@ -267,40 +251,103 @@
             }, { once: true });
         }
 
-        // --- GAME ENGINE (MANTIDO DO ANTERIOR) ---
+        // --- GAME ENGINE V13 (COM CAMINHO) ---
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
         let playing = false, score = 0, py = 0, pv = 0, obstacles = [], frame = 0;
+        let roadOffset = 0;
 
         function startGame() {
-            playing = true; score = 0; obstacles = []; py = 0; pv = 0;
+            playing = true; score = 0; obstacles = []; py = 0; pv = 0; roadOffset = 0;
             document.getElementById('boot').style.display = 'none';
             gameLoop();
         }
 
+        function drawRoad(floor, color) {
+            // Desenha a base da estrada
+            gCtx.fillStyle = "rgba(20, 20, 25, 0.8)";
+            gCtx.beginPath();
+            gCtx.moveTo(0, floor);
+            gCtx.lineTo(gCanvas.width, floor);
+            gCtx.lineTo(gCanvas.width, gCanvas.height);
+            gCtx.lineTo(0, gCanvas.height);
+            gCtx.fill();
+
+            // Linha de borda superior (Neon)
+            gCtx.strokeStyle = color;
+            gCtx.lineWidth = 3 * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pulse'));
+            gCtx.beginPath();
+            gCtx.moveTo(0, floor);
+            gCtx.lineTo(gCanvas.width, floor);
+            gCtx.stroke();
+
+            // Linhas de movimento (Caminho)
+            gCtx.strokeStyle = color;
+            gCtx.lineWidth = 1;
+            roadOffset += 15; // Velocidade do chão
+            if(roadOffset > 100) roadOffset = 0;
+
+            for(let x = -roadOffset; x < gCanvas.width; x += 80) {
+                gCtx.beginPath();
+                gCtx.globalAlpha = 0.3;
+                gCtx.moveTo(x, floor);
+                gCtx.lineTo(x - 40, gCanvas.height);
+                gCtx.stroke();
+                gCtx.globalAlpha = 1;
+            }
+        }
+
         function gameLoop() {
             if(!playing) return;
-            gCanvas.width = window.innerWidth; gCanvas.height = window.innerHeight;
-            let floor = gCanvas.height - 60;
+            gCanvas.width = window.innerWidth; 
+            gCanvas.height = window.innerHeight;
+            
+            let floor = gCanvas.height * 0.75; // Fixa o chão em 75% da altura
+            let color = getComputedStyle(document.documentElement).getPropertyValue('--p');
+            
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+            
+            drawRoad(floor, color);
+
             pv += 0.9; py += pv;
             if(py > 0) { py = 0; pv = 0; }
+
+            // Moto
+            gCtx.save();
             gCtx.font = "50px Arial";
-            gCtx.save(); gCtx.translate(100, floor + py); gCtx.scale(-1, 1);
-            gCtx.fillText("🏍️", 0, 0); gCtx.restore();
+            gCtx.shadowBlur = 15;
+            gCtx.shadowColor = color;
+            // Posiciona a moto exatamente sobre a linha do chão
+            gCtx.translate(100, floor + py - 5); 
+            gCtx.scale(-1, 1);
+            gCtx.fillText("🏍️", 0, 0);
+            gCtx.restore();
+
+            // Obstáculos
             if(frame % 70 === 0) obstacles.push({ x: gCanvas.width, type: "🚧" });
+            
             obstacles.forEach((o, i) => {
-                o.x -= 10;
-                gCtx.fillText(o.type, o.x, floor);
-                if(o.x > 50 && o.x < 110 && py > -40) playing = false;
+                o.x -= 12;
+                gCtx.shadowBlur = 10;
+                gCtx.fillText(o.type, o.x, floor - 5);
+                
+                // Colisão ajustada para o novo chão
+                if(o.x > 60 && o.x < 120 && py > -40) {
+                    playing = false;
+                    document.getElementById('boot').style.display = 'flex';
+                }
+                
                 if(o.x < -100) { obstacles.splice(i, 1); score += 100; }
             });
+
             document.getElementById('score').innerText = score.toString().padStart(4, '0');
-            frame++; requestAnimationFrame(gameLoop);
+            frame++; 
+            requestAnimationFrame(gameLoop);
         }
 
         window.addEventListener('touchstart', () => { if(playing) pv = -18; });
-        window.onresize = initStars;
+        window.addEventListener('mousedown', () => { if(playing) pv = -18; });
+        window.onresize = () => { initStars(); initStars(); };
     </script>
 </body>
 </html>
