@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlys | Official Profile</title>
+    <title>Charlys | Ultimate Profile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -23,18 +23,20 @@
             flex-direction: column;
             align-items: center;
             padding: 20px 0;
+            transition: 0.5s;
         }
 
         .card {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(15px);
             border-radius: 30px;
             padding: 30px;
             width: 90%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(255, 75, 43, 0.3);
+            box-shadow: 0 0 20px var(--primary);
             border: 2px solid var(--primary);
+            transition: 0.3s;
         }
 
         .profile-img {
@@ -43,10 +45,10 @@
             border: 3px solid white;
             object-fit: cover;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.4s;
         }
 
-        .profile-img:hover { transform: scale(1.1); border-radius: 20px; }
+        .profile-img:active { transform: scale(0.9); }
 
         .bio { font-size: 14px; color: #ccc; line-height: 1.6; margin: 15px 0; }
 
@@ -58,56 +60,35 @@
         .btn-insta { background: #E1306C; }
         .btn-whats { background: #25D366; }
         .btn-yt { background: #ff0000; grid-column: span 2; }
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
 
-        /* JOGO CALIBRADO PARA MOBILE */
+        /* JOGO */
         #game-area {
-            margin-top: 30px;
-            width: 90%;
-            max-width: 400px;
-            height: 150px;
-            background: #0a0a0a;
-            border: 2px solid #333;
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            touch-action: manipulation; /* Melhora o toque no celular */
+            margin-top: 30px; width: 90%; max-width: 400px; height: 150px;
+            background: #0a0a0a; border: 2px solid #333; border-radius: 20px;
+            position: relative; overflow: hidden; cursor: pointer; touch-action: manipulation;
         }
 
-        #player { 
-            position: absolute; 
-            bottom: 5px; 
-            left: 30px; 
-            font-size: 40px; 
-            z-index: 2; 
-            transform: scaleX(-1);
-        }
-
+        #player { position: absolute; bottom: 5px; left: 30px; font-size: 40px; z-index: 2; transform: scaleX(-1); }
         #obstacle { position: absolute; bottom: 5px; right: -50px; font-size: 30px; }
-        
-        #road {
-            position: absolute;
-            bottom: 0; width: 200%; height: 2px;
-            background: repeating-linear-gradient(90deg, #444 0, #444 20px, transparent 20px, transparent 40px);
-        }
-
+        #road { position: absolute; bottom: 0; width: 200%; height: 2px; background: repeating-linear-gradient(90deg, #444 0, #444 20px, transparent 20px, transparent 40px); }
         .road-move { animation: road-move 0.6s linear infinite; }
         @keyframes road-move { from { left: 0; } to { left: -40px; } }
 
         #game-msg {
             position: absolute; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold; color: var(--neon-green); z-index: 5; text-align: center;
-            padding: 10px; box-sizing: border-box;
+            background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--neon-green); z-index: 5; text-align: center; padding: 10px; box-sizing: border-box;
         }
+
+        /* CONTADOR DE CAFÉ */
+        .coffee-section { margin-top: 20px; font-size: 14px; cursor: pointer; background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 50px; transition: 0.3s; }
+        .coffee-section:hover { background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <img src="20260207_132012[1].jpg" class="profile-img">
+<div class="card" id="main-card">
+    <img src="20260207_132012[1].jpg" class="profile-img" onclick="changeRGB()" title="Clique para mudar o LED">
     <h1>CHARLYS</h1>
     <p style="color: var(--secondary); margin-top: -10px;">@inimigo_do_amigo.ofc</p>
     
@@ -117,10 +98,8 @@
     </p>
     
     <div style="text-align: left;">
-        <span style="font-size: 11px;">HUMOR & AMIZADE</span>
-        <div class="skill-bar"><div class="skill-progress" style="width: 100%;"></div></div>
-        <span style="font-size: 11px;">PILOTAGEM NA TITAN</span>
-        <div class="skill-bar"><div class="skill-progress" style="width: 85%; background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green);"></div></div>
+        <span style="font-size: 11px;">PILOTAGEM & SKILL</span>
+        <div class="skill-bar"><div class="skill-progress" id="bar-1" style="width: 90%;"></div></div>
     </div>
 
     <div class="links-grid">
@@ -128,10 +107,14 @@
         <a href="https://wa.me/5569992919920" class="btn btn-whats" target="_blank"><i class="fab fa-whatsapp"></i> Whats</a>
         <a href="https://youtu.be/7SGmdnFT3oU" class="btn btn-yt" target="_blank"><i class="fas fa-truck"></i> Ver Gameplay ETS2</a>
     </div>
+
+    <div class="coffee-section" onclick="addCoffee()">
+        ☕ Café na garrafa: <span id="coffee-count">0</span>
+    </div>
 </div>
 
 <div id="game-area" onmousedown="event.preventDefault(); handleInput();" ontouchstart="event.preventDefault(); handleInput();">
-    <div id="game-msg">TOQUE PARA ACELERAR <br> (ESPAÇO PULA)</div>
+    <div id="game-msg">TOQUE PARA ACELERAR A TITAN <br> <span style="font-size: 10px; color: #888;">RECORDE: <span id="high-score">0</span> KM</span></div>
     <div id="road"></div>
     <div id="player">🏍️</div>
     <div id="obstacle">🚧</div>
@@ -142,11 +125,38 @@
     let isPlaying = false;
     let score = 0;
     let isJumping = false;
-    
-    // Detecta se é celular para ajustar velocidade
-    const isMobile = window.innerWidth < 600;
-    const gameSpeed = isMobile ? 7 : 11; // No celular o obstáculo move mais devagar
+    let coffeeCount = localStorage.getItem('coffees') || 0;
+    let highScore = localStorage.getItem('highScore') || 0;
 
+    document.getElementById('coffee-count').innerText = coffeeCount;
+    document.getElementById('high-score').innerText = highScore;
+
+    // 1. FUNÇÃO RGB (Mudar cores)
+    const colors = [
+        {p: '#ff4b2b', s: '#00d2ff'}, // Original (Laranja/Azul)
+        {p: '#39ff14', s: '#fff'},    // Neon Green
+        {p: '#bc13fe', s: '#ff00ff'}, // Roxo Gamer
+        {p: '#00d2ff', s: '#39ff14'}  // Azul Água
+    ];
+    let colorIndex = 0;
+    function changeRGB() {
+        colorIndex = (colorIndex + 1) % colors.length;
+        const c = colors[colorIndex];
+        document.documentElement.style.setProperty('--primary', c.p);
+        document.documentElement.style.setProperty('--secondary', c.s);
+        document.getElementById('main-card').style.boxShadow = `0 0 20px ${c.p}`;
+    }
+
+    // 2. FUNÇÃO CAFÉ
+    function addCoffee() {
+        coffeeCount++;
+        localStorage.setItem('coffees', coffeeCount);
+        document.getElementById('coffee-count').innerText = coffeeCount;
+    }
+
+    // 3. JOGUINHO (Lógica Dino)
+    const isMobile = window.innerWidth < 600;
+    const gameSpeed = isMobile ? 7 : 11;
     const player = document.getElementById("player");
     const obstacle = document.getElementById("obstacle");
     const road = document.getElementById("road");
@@ -163,21 +173,16 @@
         score = 0;
         msg.style.display = "none";
         road.classList.add("road-move");
-        obstacle.style.right = "-50px";
-        scoreText.innerHTML = "KM: 0";
         gameLoop();
     }
 
     function jump() {
         if (isJumping) return;
         isJumping = true;
-        
         let p = 5;
-        // Subida instantânea
         let up = setInterval(() => {
             if (p >= 100) {
                 clearInterval(up);
-                // Queda pesada (Dino physics)
                 let down = setInterval(() => {
                     if (p <= 5) {
                         clearInterval(down);
@@ -195,7 +200,6 @@
 
     function gameLoop() {
         if (!isPlaying) return;
-
         let obsRight = parseInt(window.getComputedStyle(obstacle).right);
         let plyBottom = parseInt(player.style.bottom) || 5;
 
@@ -207,7 +211,6 @@
             obstacle.style.right = (obsRight + gameSpeed) + "px"; 
         }
 
-        // Colisão calibrada para emojis
         if (obsRight > 300 && obsRight < 360 && plyBottom < 50) {
             gameOver();
             return;
@@ -218,18 +221,18 @@
     function gameOver() {
         isPlaying = false;
         road.classList.remove("road-move");
-        msg.innerHTML = "BATEU A TITAN! <br> TOQUE PARA RECOMEÇAR";
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+        }
+        msg.innerHTML = `BATEU A TITAN! <br> KM: ${score} | RECORDE: ${highScore} <br> TOQUE PARA RECOMEÇAR`;
         msg.style.display = "flex";
+        document.getElementById('high-score').innerText = highScore;
         player.style.bottom = "5px";
         isJumping = false;
     }
 
-    window.addEventListener("keydown", (e) => {
-        if (e.code === "Space") {
-            e.preventDefault();
-            handleInput();
-        }
-    });
+    window.addEventListener("keydown", (e) => { if (e.code === "Space") { e.preventDefault(); handleInput(); } });
 </script>
 
 </body>
