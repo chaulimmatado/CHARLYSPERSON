@@ -2,256 +2,360 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlys | Official Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Charlys | Legendary Gamer Hub</title>
+    
+    <meta name="description" content="Charlys - Official Hub. Pilot, Gamer, Developer.">
+    <meta property="og:image" content="20260207_132012[1].jpg">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
+        /* --- ARQUITETURA DE DESIGN --- */
         :root {
-            --primary: #ff4b2b;
-            --secondary: #00d2ff;
-            --neon-green: #39ff14;
-            --bg-dark: #050505;
-            --card-bg: rgba(15, 15, 15, 0.95);
+            --p: #ff4b2b; /* Primary Neon Red */
+            --s: #00d2ff; /* Secondary Cyan */
+            --n: #39ff14; /* Neon Green */
+            --dark: #020202;
+            --glass: rgba(18, 18, 18, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-dark);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark);
             color: #fff;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 10px;
             overflow-x: hidden;
         }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        /* Fundo de Partículas de Alta Performance */
+        #nebula-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            filter: blur(1px);
+        }
 
-        .bento-container {
+        /* --- BENTO GRID SYSTEM --- */
+        .grid-master {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            width: 95%;
-            max-width: 500px;
+            gap: 16px;
+            width: 100%;
+            max-width: 480px;
+            z-index: 10;
         }
 
-        .bento-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 20px;
-            transition: 0.3s;
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 24px;
+            position: relative;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
-        .profile-block { grid-column: span 2; text-align: center; }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; margin-bottom: 10px; }
+        .card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: var(--p);
+            box-shadow: 0 0 30px rgba(255, 75, 43, 0.2);
+        }
 
-        /* GAME STYLES */
-        .game-block {
+        /* --- PERFIL --- */
+        .profile { grid-column: span 2; text-align: center; }
+        .avatar-container {
+            width: 120px; height: 120px;
+            margin: 0 auto 15px;
+            position: relative;
+            padding: 5px;
+            background: linear-gradient(45deg, var(--p), var(--s));
+            border-radius: 50%;
+            animation: rotateGlow 5s linear infinite;
+        }
+        @keyframes rotateGlow { 100% { filter: hue-rotate(360deg); } }
+        
+        .avatar {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--dark);
+        }
+
+        .badge-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .badge { font-size: 20px; opacity: 0.1; filter: grayscale(1); transition: 0.5s; }
+        .badge.active { opacity: 1; filter: grayscale(0); transform: scale(1.3); }
+
+        /* --- MINI-GAME PRO (TITAN 98 LEGACY) --- */
+        .game-card {
             grid-column: span 2;
-            height: 200px;
+            height: 220px;
+            padding: 0;
             background: #000;
+            border: 2px solid #1a1a1a;
             position: relative;
             overflow: hidden;
-            border: 2px solid #222;
             cursor: pointer;
-            padding: 0;
         }
 
-        #player-sprite {
+        #game-stage { width: 100%; height: 100%; position: relative; }
+        
+        #titan {
             position: absolute;
-            bottom: 20px;
-            left: 50px;
+            bottom: 25px; left: 50px;
             font-size: 45px;
+            z-index: 100;
             transform: scaleX(-1);
-            z-index: 10;
+            will-change: transform;
             line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px; height: 50px; /* Box fixo para cálculo */
         }
 
-        #obstacle-sprite {
+        #cone {
             position: absolute;
-            bottom: 20px;
-            right: -60px;
-            font-size: 30px;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px; height: 40px;
+            bottom: 25px; right: -60px;
+            font-size: 32px;
+            z-index: 100;
+            will-change: right;
         }
 
-        .road-line {
+        .ground {
             position: absolute;
             bottom: 0; width: 200%; height: 4px;
-            background: repeating-linear-gradient(90deg, #333 0, #333 30px, transparent 30px, transparent 60px);
+            background: repeating-linear-gradient(90deg, #333 0, #333 40px, transparent 40px, transparent 80px);
         }
 
-        #game-overlay {
+        .overlay {
             position: absolute; inset: 0;
             background: rgba(0,0,0,0.85);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            z-index: 30;
-            color: var(--neon-green);
+            z-index: 200;
             text-align: center;
-            font-weight: bold;
         }
 
-        .social-block { grid-column: span 1; display: grid; gap: 10px; }
-        .btn-social {
-            padding: 15px; border-radius: 15px; color: #fff; text-decoration: none;
-            text-align: center; font-weight: bold; font-size: 14px;
+        .crt-effect {
+            position: absolute; inset: 0;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none; z-index: 150;
         }
-        .insta { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
-        .whats { background: #25D366; }
 
-        .coffee-block { grid-column: span 1; text-align: center; cursor: pointer; }
-        #coffee-val { font-size: 30px; font-weight: bold; display: block; }
+        .score-ui {
+            position: absolute; top: 20px; left: 20px;
+            font-weight: 900; font-family: 'Courier New', monospace;
+            font-size: 20px; color: var(--n); z-index: 180;
+        }
+
+        /* --- BOTÕES E CAFÉ --- */
+        .social-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            height: 60px; border-radius: 20px; text-decoration: none;
+            color: #fff; font-weight: bold; transition: 0.3s;
+        }
+        .ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .wa { background: #25D366; }
+
+        .coffee-meter {
+            grid-column: span 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        #c-count { font-size: 32px; font-weight: 900; color: #6f4e37; }
+
     </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<canvas id="nebula-canvas"></canvas>
 
-<div class="bento-container">
-    <div class="bento-card profile-block">
-        <img src="20260207_132012[1].jpg" class="profile-img" alt="Charlys">
-        <h1>CHARLYS</h1>
-        <p style="color: var(--secondary)">@inimigo_do_amigo.ofc</p>
-    </div>
-
-    <div class="bento-card game-block" id="game-container">
-        <div id="game-overlay">
-            <span>TOQUE PARA ACELERAR A TITAN</span>
-            <small style="color: #666; display: block; margin-top: 10px;">RECORDE: <span id="hi-score">0</span> KM</small>
+<div class="grid-master">
+    <div class="card profile">
+        <div class="badge-bar">
+            <span id="badge-1" class="badge" title="Cafeinado">☕</span>
+            <span id="badge-2" class="badge" title="Rei da Pista">🏆</span>
+            <span id="badge-3" class="badge" title="Network">🔗</span>
         </div>
-        <div id="game-score" style="position: absolute; top: 15px; left: 20px; font-weight: bold; z-index: 20;">0 KM</div>
-        <div id="road" class="road-line"></div>
-        <div id="player-sprite">🏍️</div>
-        <div id="obstacle-sprite">🚧</div>
+        <div class="avatar-container">
+            <img src="20260207_132012[1].jpg" class="avatar" onclick="toggleSecretMode()">
+        </div>
+        <h1 style="letter-spacing: 3px; font-weight: 900;">CHARLYS</h1>
+        <p style="color: var(--s); font-size: 14px; font-weight: bold;">OFFICIAL HUB</p>
     </div>
 
-    <div class="social-block">
-        <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="btn-social insta">INSTAGRAM</a>
-        <a href="https://wa.me/5569992919920" target="_blank" class="btn-social whats">WHATSAPP</a>
+    <div class="card game-card" id="game-box">
+        <div id="game-stage">
+            <div id="score-val" class="score-ui">00000</div>
+            <div id="game-msg" class="overlay">
+                <h2 style="color: var(--n)">READY TO RACE?</h2>
+                <p style="font-size: 10px; color: #888; margin-top: 10px;">TOP: <span id="high-val">0</span> KM</p>
+            </div>
+            <div class="crt-effect"></div>
+            <div id="road-line" class="ground"></div>
+            <div id="titan">🏍️</div>
+            <div id="cone">🚧</div>
+        </div>
     </div>
 
-    <div class="bento-card coffee-block" onclick="addCoffee()">
-        <span>☕</span>
-        <span id="coffee-val">0</span>
-        <small>CAFÉS</small>
+    <div class="card" style="grid-column: span 1; padding: 10px;">
+        <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="social-btn ig" onclick="unlock(3)">
+            <i class="fab fa-instagram fa-lg"></i>
+        </a>
+    </div>
+    <div class="card" style="grid-column: span 1; padding: 10px;">
+        <a href="https://wa.me/5569992919920" target="_blank" class="social-btn wa" onclick="unlock(3)">
+            <i class="fab fa-whatsapp fa-lg"></i>
+        </a>
+    </div>
+
+    <div class="card coffee-meter" onclick="brewCoffee()">
+        <span style="font-size: 30px;">☕</span>
+        <span id="c-count">0</span>
+        <small style="opacity: 0.5; font-weight: bold; font-size: 10px;">COFFEE SHOTS</small>
+    </div>
+
+    <div class="card" style="grid-column: span 1; display: flex; align-items: center; justify-content: center; text-align: center;">
+        <p style="font-size: 10px; opacity: 0.4;">TITAN 98<br>EDITION 2026</p>
     </div>
 </div>
 
 <script>
-    /* --- BACKGROUND PARTICLES --- */
-    const canvas = document.getElementById('bg-canvas');
+    /* --- MOTOR GRÁFICO DE FUNDO (STARFIELD PARALLAX) --- */
+    const canvas = document.getElementById('nebula-canvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
-    function initBg() {
+    let stars = [];
+    const m = { x: 0, y: 0 };
+
+    function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        particles = [];
-        for(let i=0; i<60; i++) particles.push({
-            x: Math.random()*canvas.width, y: Math.random()*canvas.height,
-            s: Math.random()*2, v: Math.random()*0.5 + 0.1
+        stars = [];
+        for(let i=0; i<100; i++) stars.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            z: Math.random()*canvas.width,
+            o: Math.random()
         });
     }
-    function drawBg() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "rgba(255,255,255,0.1)";
-        particles.forEach(p => {
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-            p.y += p.v; if(p.y > canvas.height) p.y = -10;
+
+    function drawStars() {
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+        stars.forEach(s => {
+            let px = (s.x - canvas.width/2) * (canvas.width/s.z) + canvas.width/2;
+            let py = (s.y - canvas.height/2) * (canvas.width/s.z) + canvas.height/2;
+            let sz = (1 - s.z / canvas.width) * 3;
+            ctx.fillStyle = `rgba(255,255,255,${s.o})`;
+            ctx.beginPath(); ctx.arc(px + (m.x*0.05), py + (m.y*0.05), sz, 0, Math.PI*2); ctx.fill();
+            s.z -= 2; if(s.z <= 0) s.z = canvas.width;
         });
-        requestAnimationFrame(drawBg);
+        requestAnimationFrame(drawStars);
     }
-    initBg(); drawBg();
 
-    /* --- GAME ENGINE (HITBOX FIXED) --- */
-    let playing = false, score = 0, hi = localStorage.getItem('charlys_hi') || 0;
-    let jump = false, py = 0, pVel = 0;
-    let ox = -60, speed = 6;
+    window.addEventListener('mousemove', e => { m.x = e.clientX - canvas.width/2; m.y = e.clientY - canvas.height/2; });
+    window.addEventListener('resize', resize);
+    resize(); drawStars();
+
+    /* --- TITAN ENGINE 98 (CORE DO JOGO) --- */
+    let running = false, score = 0, high = localStorage.getItem('hub_high') || 0;
+    let py = 0, pVel = 0, jump = false;
+    let cx = -70, speed = 8;
     
-    const gravity = 0.8, force = -14;
-    const player = document.getElementById('player-sprite');
-    const obstacle = document.getElementById('obstacle-sprite');
-    const road = document.getElementById('road');
-    const overlay = document.getElementById('game-overlay');
-    const scoreText = document.getElementById('game-score');
-    
-    document.getElementById('hi-score').innerText = hi;
+    const G = 0.8, J = -15;
+    const titan = document.getElementById('titan'),
+          cone = document.getElementById('cone'),
+          road = document.getElementById('road-line'),
+          scoreUi = document.getElementById('score-val'),
+          msg = document.getElementById('game-msg');
 
-    function loop() {
-        if(!playing) return;
+    document.getElementById('high-val').innerText = high;
 
-        // FÍSICA DO PULO
-        pVel += gravity;
+    function engine() {
+        if(!running) return;
+
+        // Física de Salto
+        pVel += G;
         py -= pVel;
         if(py <= 0) { py = 0; pVel = 0; jump = false; }
-        player.style.transform = `scaleX(-1) translateY(${-py}px)`;
+        titan.style.transform = `scaleX(-1) translateY(${-py}px)`;
 
-        // MOVIMENTO OBSTÁCULO
-        speed = 7 + (score / 200);
-        ox += speed;
-        if(ox > 550) { ox = -60; score += 10; scoreText.innerText = score + " KM"; }
-        obstacle.style.right = ox + 'px';
+        // Lógica do Obstáculo & Dificuldade
+        speed = 8 + (score / 250);
+        cx += speed;
+        if(cx > 550) { cx = -70; score += 10; scoreUi.innerText = score.toString().padStart(5, '0'); }
+        cone.style.right = cx + 'px';
 
-        // COLISÃO CALIBRADA (SISTEMA DE HITBOX GEOMÉTRICA)
-        // O player está fixo a 50px da esquerda. O container tem ~500px.
-        // ox é a distância da DIREITA.
-        // Convertendo ox para posição da esquerda:
-        let obstacleLeft = 500 - ox - 40; 
-        let playerLeft = 50;
-        
-        // Verificação de proximidade (Ajuste fino de pixels aqui)
-        let horizontalMatch = (obstacleLeft < playerLeft + 45) && (obstacleLeft + 30 > playerLeft);
-        let verticalMatch = (py < 35); // Se o pulo for menor que 35px de altura, bate.
+        // SISTEMA DE HITBOX PRECISA (AABB)
+        // Largura da titan: ~40px | Altura: ~40px
+        let titanL = 50, titanR = 90;
+        let coneL = canvas.width > 500 ? 500 - cx - 35 : document.body.clientWidth - cx - 35; 
+        // No container fixo de 480px:
+        let cPos = 480 - cx - 40; 
 
-        if(horizontalMatch && verticalMatch) {
-            gameOver();
+        if(cPos > 50 && cPos < 90 && py < 40) {
+            crash();
             return;
         }
 
-        // EVOLUÇÃO
-        if(score >= 500) player.innerText = '🚛';
-        else if(score >= 200) player.innerText = '🚀';
-        else player.innerText = '🏍️';
+        // Skins Evolutivas
+        if(score >= 1000) { titan.innerText = '🚛'; unlock(2); }
+        else if(score >= 500) titan.innerText = '🚀';
+        else titan.innerText = '🏍️';
 
-        road.style.left = (-(Date.now()/10) % 60) + "px";
-        requestAnimationFrame(loop);
+        road.style.left = (-(Date.now()/8) % 80) + 'px';
+        requestAnimationFrame(engine);
     }
 
-    function gameOver() {
-        playing = false;
-        if(score > hi) { hi = score; localStorage.setItem('charlys_hi', hi); }
-        document.getElementById('hi-score').innerText = hi;
-        overlay.innerHTML = `BATEU A TITAN!<br>${score} KM<br><small>TOQUE PARA RECOMEÇAR</small>`;
-        overlay.style.display = 'flex';
+    function crash() {
+        running = false;
+        if(score > high) { high = score; localStorage.setItem('hub_high', high); }
+        document.getElementById('high-val').innerText = high;
+        msg.innerHTML = `<h2 style="color:var(--p)">WASTED</h2><p>${score} KM</p><small style="color:#555">TOUCH TO RESPOND</small>`;
+        msg.style.display = 'flex';
     }
 
-    document.getElementById('game-container').addEventListener('mousedown', (e) => {
+    document.getElementById('game-box').addEventListener('mousedown', e => {
         e.preventDefault();
-        if(!playing) {
-            playing = true; score = 0; ox = -60; py = 0;
-            overlay.style.display = 'none';
-            scoreText.innerText = "0 KM";
-            loop();
+        if(!running) {
+            running = true; score = 0; cx = -70; py = 0;
+            msg.style.display = 'none';
+            scoreUi.innerText = "00000";
+            engine();
         } else if(!jump) {
-            jump = true; pVel = force;
+            jump = true; pVel = J;
         }
     });
 
-    function addCoffee() {
-        let val = parseInt(document.getElementById('coffee-val').innerText) + 1;
-        document.getElementById('coffee-val').innerText = val;
+    /* --- SISTEMA DE CONQUISTAS --- */
+    let coffees = localStorage.getItem('hub_c') || 0;
+    document.getElementById('c-count').innerText = coffees;
+
+    function brewCoffee() {
+        coffees++;
+        localStorage.setItem('hub_c', coffees);
+        document.getElementById('c-count').innerText = coffees;
+        if(coffees >= 50) unlock(1);
+    }
+
+    function unlock(id) { document.getElementById('badge-'+id).classList.add('active'); }
+
+    // Init Badges
+    if(coffees >= 50) unlock(1);
+    if(high >= 1000) unlock(2);
+
+    function toggleSecretMode() {
+        document.documentElement.style.setProperty('--p', '#' + Math.floor(Math.random()*16777215).toString(16));
     }
 </script>
+
 </body>
 </html>
