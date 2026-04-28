@@ -3,464 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Charlys | Legendary Hub</title>
+    <title>Charlys | The Legendary Driver Hub</title>
     
-    <meta name="theme-color" content="#020202">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
     <style>
-        /* --- ARQUITETURA DE CORES E TOKENS --- */
+        /* --- DESIGN SYSTEM: CYBER-BENTO --- */
         :root {
-            --p: #ff4b2b;        /* Neon Red */
-            --s: #00d2ff;        /* Cyber Blue */
-            --n: #39ff14;        /* Matrix Green */
-            --bg: #020202;       /* Deep Black */
-            --card: rgba(18, 18, 18, 0.95);
-            --border: rgba(255, 255, 255, 0.08);
-            --font-main: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --neon-red: #ff4b2b;
+            --neon-blue: #00d2ff;
+            --neon-green: #39ff14;
+            --deep-black: #050505;
+            --glass-bg: rgba(10, 10, 10, 0.9);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --glow: 0 0 15px rgba(255, 75, 43, 0.5);
+            --font-h: 'Orbitron', sans-serif;
+            --font-b: 'Rajdhani', sans-serif;
         }
 
-        /* --- RESET PROFISSIONAL --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            outline: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg);
-            color: #ffffff;
-            font-family: var(--font-main);
-            min-height: 100vh;
+            background-color: var(--deep-black);
+            color: #f0f0f0;
+            font-family: var(--font-b);
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
-            overflow-x: hidden;
-            padding: 40px 15px;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* --- ENGINE DE FUNDO (STARFIELD) --- */
-        #master-canvas {
+        /* Canvas de Fundo - Space Engine */
+        #render-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+            filter: contrast(1.2);
         }
 
-        /* --- CONTAINER BENTO GRID --- */
-        .bento-master {
+        /* Layout Grid Master */
+        .container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: minmax(100px, auto);
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: auto;
             gap: 20px;
             width: 100%;
-            max-width: 520px;
-            z-index: 10;
+            max-width: 1000px;
+            animation: appEntry 1s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* Estilização Base dos Cards */
-        .bento-item {
-            background: var(--card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 35px;
-            padding: 25px;
+        @keyframes appEntry {
+            from { opacity: 0; transform: scale(0.9) translateY(50px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Base dos Cards Bento */
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--card-border);
+            border-radius: 40px;
+            padding: 30px;
             position: relative;
             overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
-        .bento-item:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: var(--p);
-            box-shadow: 0 0 40px rgba(255, 75, 43, 0.15);
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
         }
 
-        /* --- COMPONENTES DE INTERFACE --- */
-        
-        /* Profile Section */
-        .profile-card {
-            grid-column: span 2;
-            text-align: center;
-            border-bottom: 4px solid var(--p);
+        .bento-card:hover::before { left: 100%; }
+
+        .bento-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
         }
 
-        .avatar-group {
+        /* --- PERFIL HEADER --- */
+        .header-profile {
+            grid-column: span 4;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%);
+        }
+
+        .avatar-box {
             position: relative;
-            width: 130px;
-            height: 130px;
-            margin: 0 auto 20px;
+            width: 180px; height: 180px;
+            flex-shrink: 0;
         }
 
-        .avatar-img {
-            width: 100%;
-            height: 100%;
+        .avatar-main {
+            width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid var(--bg);
-            z-index: 5;
+            border: 5px solid var(--deep-black);
+            z-index: 10;
             position: relative;
-            cursor: pointer;
         }
 
-        .avatar-ring {
+        .ring-anim {
             position: absolute;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            inset: -8px;
             border-radius: 50%;
-            background: linear-gradient(45deg, var(--p), var(--s), var(--n));
-            animation: rotate 3s linear infinite;
-            z-index: 1;
+            background: conic-gradient(from 0deg, var(--neon-red), var(--neon-blue), var(--neon-green), var(--neon-red));
+            animation: spin 4s linear infinite;
         }
 
-        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .badges {
+        .profile-info h1 {
+            font-family: var(--font-h);
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-container {
             display: flex;
-            justify-content: center;
             gap: 15px;
-            margin-bottom: 15px;
+            margin-top: 20px;
         }
 
-        .medal {
-            font-size: 22px;
-            filter: grayscale(1) brightness(0.3);
-            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        .badge-pill {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .medal.active {
-            filter: grayscale(0) brightness(1);
-            transform: scale(1.3);
-            text-shadow: 0 0 15px var(--p);
-        }
-
-        /* Game Section */
-        .game-card {
-            grid-column: span 2;
-            height: 240px;
+        /* --- GAME SECTION: TITAN CORE ENGINE --- */
+        .game-area {
+            grid-column: span 4;
+            height: 350px;
             padding: 0;
             background: #000;
-            border: 2px solid #111;
+            border: 4px solid #111;
         }
 
-        #stage {
-            width: 100%;
-            height: 100%;
+        #game-canvas-wrap {
+            width: 100%; height: 100%;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
 
-        .hud-score {
+        .game-ui {
             position: absolute;
-            top: 25px; left: 25px;
-            font-family: 'Monaco', monospace;
-            font-weight: 900;
-            font-size: 22px;
-            color: var(--n);
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+            top: 30px; left: 30px;
+            z-index: 100;
+        }
+
+        .km-counter {
+            font-family: 'Orbitron';
+            font-size: 32px;
+            color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green);
+        }
+
+        #pilot-sprite {
+            position: absolute;
+            bottom: 40px; left: 100px;
+            font-size: 70px;
             z-index: 50;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
         }
 
-        #titan {
+        .road-system {
             position: absolute;
-            bottom: 30px; left: 60px;
-            font-size: 50px;
-            transform: scaleX(-1);
-            z-index: 40;
-            line-height: 1;
+            bottom: 0; width: 200%; height: 10px;
+            background: repeating-linear-gradient(90deg, #333 0, #333 50px, transparent 50px, transparent 100px);
         }
 
-        #obstacle {
-            position: absolute;
-            bottom: 30px; right: -80px;
-            font-size: 35px;
-            z-index: 40;
-        }
-
-        .ground-line {
-            position: absolute;
-            bottom: 0;
-            width: 200%;
-            height: 6px;
-            background: repeating-linear-gradient(90deg, #222 0, #222 40px, transparent 40px, transparent 80px);
-        }
-
-        .screen-overlay {
+        .game-overlay-screen {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.9);
+            z-index: 200;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            z-index: 100;
+            align-items: center;
             text-align: center;
-            backdrop-filter: blur(5px);
         }
 
-        /* Buttons & Extras */
-        .social-link {
-            grid-column: span 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 70px;
-            border-radius: 25px;
-            font-size: 24px;
-            color: white;
-            transition: 0.3s;
-            text-decoration: none;
+        /* --- INFO CARDS --- */
+        .card-sm { grid-column: span 1; text-align: center; }
+        .card-md { grid-column: span 2; }
+
+        .stat-val {
+            font-family: var(--font-h);
+            font-size: 36px;
+            display: block;
+            margin: 10px 0;
         }
 
-        .ig-theme { background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d); }
-        .wa-theme { background: #25D366; }
-
-        .coffee-counter {
-            grid-column: span 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .btn-action {
+            width: 100%;
+            padding: 20px;
+            border-radius: 20px;
+            border: none;
             cursor: pointer;
+            font-family: var(--font-h);
+            font-weight: 900;
+            font-size: 14px;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-decoration: none;
+            color: #fff;
         }
 
-        #c-num { font-size: 35px; font-weight: 900; color: #6f4e37; }
-
-        .shake { animation: shakeAnim 0.2s ease-in-out; }
-        @keyframes shakeAnim {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        .ig-btn { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
+        .wa-btn { background: #25D366; }
+        
+        .coffee-btn {
+            background: #6f4e37;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
+
+        /* --- MOBILE ADAPTATION --- */
+        @media (max-width: 768px) {
+            .container { grid-template-columns: repeat(2, 1fr); }
+            .header-profile { grid-column: span 2; flex-direction: column; text-align: center; }
+            .game-area { grid-column: span 2; height: 250px; }
+            .card-md { grid-column: span 2; }
+            .profile-info h1 { font-size: 32px; }
+        }
+
     </style>
 </head>
 <body>
 
-<canvas id="master-canvas"></canvas>
+    <canvas id="render-bg"></canvas>
 
-<div class="bento-master">
-    <section class="bento-item profile-card">
-        <div class="badges">
-            <span id="m-cafe" class="medal">☕</span>
-            <span id="m-pilot" class="medal">🏆</span>
-            <span id="m-social" class="medal">📡</span>
-        </div>
-        <div class="avatar-group">
-            <div class="avatar-ring"></div>
-            <img src="20260207_132012[1].jpg" class="avatar-img" alt="Charlys">
-        </div>
-        <h1 style="letter-spacing: 4px; font-weight: 900; font-size: 28px;">CHARLYS</h1>
-        <p style="color: var(--s); font-size: 12px; font-weight: bold; margin-top: 5px;">LEGENDARY DRIVER • 2026</p>
-    </section>
-
-    <section class="bento-item game-card" id="game-zone">
-        <div id="stage">
-            <div id="score-display" class="hud-score">00000</div>
-            <div id="ui-overlay" class="screen-overlay">
-                <h2 style="color: var(--n); letter-spacing: 2px;">START ENGINE</h2>
-                <p style="font-size: 10px; opacity: 0.5; margin-top: 10px;">RECORDE: <span id="hi-score">0</span> KM</p>
+    <div class="container">
+        
+        <header class="bento-card header-profile">
+            <div class="avatar-box">
+                <div class="ring-anim"></div>
+                <img src="20260207_132012[1].jpg" class="avatar-main" alt="Charlys Logo">
             </div>
-            <div id="road" class="ground-line"></div>
-            <div id="titan">🏍️</div>
-            <div id="obstacle">🚧</div>
+            <div class="profile-info">
+                <h1>Charlys</h1>
+                <p style="letter-spacing: 2px; opacity: 0.7; font-weight: 700;">SUPREME PILOT & DEVELOPER</p>
+                <div class="badge-container">
+                    <div class="badge-pill" id="b-1"><i class="fas fa-bolt"></i> TITAN 98</div>
+                    <div class="badge-pill" id="b-2"><i class="fas fa-truck"></i> ETS2 PRO</div>
+                    <div class="badge-pill" id="b-3"><i class="fas fa-code"></i> HUB ELITE</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="bento-card game-area" id="game-trigger">
+            <div id="game-canvas-wrap">
+                <div class="game-ui">
+                    <div class="km-counter" id="km-text">0000 KM</div>
+                    <p style="font-size: 10px; font-weight: bold; opacity: 0.5;">HI-SCORE: <span id="hi-text">0</span> KM</p>
+                </div>
+
+                <div id="game-overlay" class="game-overlay-screen">
+                    <h2 style="font-family: var(--font-h); color: var(--neon-red); font-size: 30px;">ENGINE OFFLINE</h2>
+                    <p style="margin-top: 15px; font-weight: bold; letter-spacing: 1px;">CLIQUE PARA DAR A PARTIDA NA TITAN</p>
+                    <div style="margin-top: 20px; font-size: 12px; opacity: 0.4;">USE O CLIQUE/TOQUE PARA PULAR OS OBSTÁCULOS</div>
+                </div>
+
+                <div id="road-layer" class="road-system"></div>
+                <div id="pilot-sprite">🏍️</div>
+                <div id="hazard-sprite" style="position: absolute; bottom: 40px; right: -100px; font-size: 50px;">🚧</div>
+            </div>
+        </main>
+
+        <div class="bento-card card-md">
+            <h3 style="margin-bottom: 20px; font-family: var(--font-h); font-size: 14px;">CONNECT SYSTEMS</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="btn-action ig-btn">
+                    <i class="fab fa-instagram"></i> INSTAGRAM
+                </a>
+                <a href="https://wa.me/5569992919920" target="_blank" class="btn-action wa-btn">
+                    <i class="fab fa-whatsapp"></i> WHATSAPP
+                </a>
+            </div>
         </div>
-    </section>
 
-    <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="bento-item social-link ig-theme" onclick="checkSocial()">
-        <i class="fab fa-instagram"></i>
-    </a>
-    <a href="https://wa.me/5569992919920" target="_blank" class="bento-item social-link wa-theme" onclick="checkSocial()">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+        <div class="bento-card card-sm coffee-btn" onclick="addFuel()">
+            <span style="font-size: 40px;">☕</span>
+            <span class="stat-val" id="fuel-count">0</span>
+            <p style="font-size: 10px; font-weight: 900; opacity: 0.7;">COFFEE FUEL</p>
+        </div>
 
-    <div class="bento-item coffee-counter" onclick="addCoffee()">
-        <span style="font-size: 30px;">☕</span>
-        <span id="c-num">0</span>
-        <small style="font-size: 9px; font-weight: 900; opacity: 0.4;">CAFFEINE LEVEL</small>
+        <div class="bento-card card-sm">
+            <i class="fas fa-trophy" style="color: gold; font-size: 30px;"></i>
+            <span class="stat-val" style="font-size: 24px;" id="rank-name">NOOB</span>
+            <p style="font-size: 10px; font-weight: 900; opacity: 0.5;">PILOT RANK</p>
+        </div>
+
     </div>
 
-    <div class="bento-item" style="grid-column: span 1; display: flex; align-items: center; justify-content: center; text-align: center;">
-        <p style="font-size: 9px; opacity: 0.3; font-weight: bold;">BUILT BY GEMINI<br>FOR THE BEST PILOT</p>
-    </div>
-</div>
+    <script>
+        /**
+         * GLOBAL ENGINE SETTINGS
+         */
+        const state = {
+            gameActive: false,
+            score: 0,
+            highScore: localStorage.getItem('charlys_pro_hi') || 0,
+            coffee: parseInt(localStorage.getItem('charlys_coffee')) || 0,
+            playerY: 0,
+            jumpVel: 0,
+            isJumping: false,
+            hazardX: -100,
+            gameSpeed: 10,
+            gravity: 1.2,
+            jumpPower: -22
+        };
 
-<script>
-    /* --- BACKGROUND ENGINE (NEBULA SYSTEM) ---
-       Utiliza técnica de profundidade Z para estrelas.
-    */
-    const canvas = document.getElementById('master-canvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
+        // DOM Elements
+        const el = {
+            bg: document.getElementById('render-bg'),
+            pilot: document.getElementById('pilot-sprite'),
+            hazard: document.getElementById('hazard-sprite'),
+            km: document.getElementById('km-text'),
+            hi: document.getElementById('hi-text'),
+            overlay: document.getElementById('game-overlay'),
+            trigger: document.getElementById('game-trigger'),
+            road: document.getElementById('road-layer'),
+            fuel: document.getElementById('fuel-count'),
+            rank: document.getElementById('rank-name')
+        };
 
-    function setupCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        stars = [];
-        for(let i=0; i<150; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 2,
-                speed: Math.random() * 0.5 + 0.1,
-                opacity: Math.random()
+        el.hi.innerText = state.highScore;
+        el.fuel.innerText = state.coffee;
+
+        /**
+         * BACKGROUND ENGINE - STARFIELD 3D
+         */
+        const ctx = el.bg.getContext('2d');
+        let particles = [];
+
+        function initStars() {
+            el.bg.width = window.innerWidth;
+            el.bg.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<150; i++) {
+                particles.push({
+                    x: Math.random() * el.bg.width,
+                    y: Math.random() * el.bg.height,
+                    z: Math.random() * el.bg.width,
+                    size: Math.random() * 2
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0,0,el.bg.width, el.bg.height);
+            
+            particles.forEach(p => {
+                let x = (p.x - el.bg.width/2) * (el.bg.width/p.z) + el.bg.width/2;
+                let y = (p.y - el.bg.height/2) * (el.bg.width/p.z) + el.bg.height/2;
+                let s = p.size * (el.bg.width/p.z);
+                
+                ctx.fillStyle = `rgba(255,255,255,${1 - p.z/el.bg.width})`;
+                ctx.beginPath();
+                ctx.arc(x, y, s, 0, Math.PI*2);
+                ctx.fill();
+                
+                p.z -= 5;
+                if(p.z <= 0) p.z = el.bg.width;
             });
-        }
-    }
-
-    function renderBg() {
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        stars.forEach(s => {
-            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-            ctx.fill();
-            s.y += s.speed;
-            if(s.y > canvas.height) s.y = -5;
-        });
-        requestAnimationFrame(renderBg);
-    }
-    window.addEventListener('resize', setupCanvas);
-    setupCanvas(); renderBg();
-
-    /* --- GAME LOGIC: TITAN LEGACY ENGINE ---
-       Lógica de detecção AABB (Axis-Aligned Bounding Box) calibrada.
-    */
-    const GAME = {
-        active: false,
-        score: 0,
-        high: localStorage.getItem('t_high') || 0,
-        py: 0, 
-        pVel: 0,
-        jump: false,
-        ox: -100,
-        speed: 8,
-        gravity: 0.8,
-        power: -16
-    };
-
-    const elTitan = document.getElementById('titan');
-    const elObstacle = document.getElementById('obstacle');
-    const elRoad = document.getElementById('road');
-    const elScore = document.getElementById('score-display');
-    const elOverlay = document.getElementById('ui-overlay');
-    const elZone = document.getElementById('game-zone');
-
-    document.getElementById('hi-score').innerText = GAME.high;
-
-    function runGame() {
-        if(!GAME.active) return;
-
-        // 1. Física de Movimento Vertical
-        GAME.pVel += GAME.gravity;
-        GAME.py -= GAME.pVel;
-        if(GAME.py <= 0) {
-            GAME.py = 0;
-            GAME.pVel = 0;
-            GAME.jump = false;
-        }
-        elTitan.style.transform = `scaleX(-1) translateY(${-GAME.py}px)`;
-
-        // 2. Movimento do Obstáculo e Dificuldade Escalonada
-        GAME.speed = 8 + (GAME.score / 200);
-        GAME.ox += GAME.speed;
-        
-        if(GAME.ox > (elZone.offsetWidth + 100)) {
-            GAME.ox = -80;
-            GAME.score += 10;
-            elScore.innerText = GAME.score.toString().padStart(5, '0');
-        }
-        elObstacle.style.right = GAME.ox + 'px';
-
-        // 3. DETECÇÃO DE COLISÃO (HITBOX PRECISA)
-        // Largura do container: elZone.offsetWidth (~480-500px)
-        // Titan está fixo em left: 60px.
-        // O obstáculo vem da direita (ox).
-        const titanBox = { l: 60, r: 110, h: 45 }; 
-        const obsPosLeft = elZone.offsetWidth - GAME.ox - 40;
-
-        if(obsPosLeft > titanBox.l && obsPosLeft < titanBox.r && GAME.py < titanBox.h) {
-            handleCrash();
-            return;
+            requestAnimationFrame(drawStars);
         }
 
-        // 4. Evolução do Veículo
-        if(GAME.score >= 1000) { elTitan.innerText = '🚛'; activateMedal('m-pilot'); }
-        else if(GAME.score >= 500) elTitan.innerText = '🚀';
-        else elTitan.innerText = '🏍️';
+        window.addEventListener('resize', initStars);
+        initStars(); drawStars();
 
-        // 5. Animação da Estrada
-        elRoad.style.left = (-(Date.now() / 8) % 80) + 'px';
+        /**
+         * GAME ENGINE - CORE LOOP
+         */
+        function gameLoop() {
+            if(!state.gameActive) return;
 
-        requestAnimationFrame(runGame);
-    }
+            // FÍSICA DE PULO
+            if(state.isJumping) {
+                state.jumpVel += state.gravity;
+                state.playerY -= state.jumpVel;
+                
+                if(state.playerY <= 0) {
+                    state.playerY = 0;
+                    state.jumpVel = 0;
+                    state.isJumping = false;
+                }
+            }
+            el.pilot.style.transform = `translateY(${-state.playerY}px) scaleX(-1)`;
 
-    function handleCrash() {
-        GAME.active = false;
-        elZone.classList.add('shake');
-        setTimeout(() => elZone.classList.remove('shake'), 200);
-        
-        if(GAME.score > GAME.high) {
-            GAME.high = GAME.score;
-            localStorage.setItem('t_high', GAME.high);
+            // OBSTÁCULOS E DIFICULDADE
+            state.gameSpeed = 10 + (state.score / 200);
+            state.hazardX += state.gameSpeed;
+            
+            if(state.hazardX > (el.trigger.offsetWidth + 100)) {
+                state.hazardX = -100;
+                state.score += 10;
+                updateUI();
+            }
+            el.hazard.style.right = state.hazardX + 'px';
+
+            // DETECÇÃO DE COLISÃO AABB PROFISSIONAL
+            // Convertemos coordenadas do container para hitbox relativa
+            const rectPilot = el.pilot.getBoundingClientRect();
+            const rectHazard = el.hazard.getBoundingClientRect();
+
+            if (
+                rectPilot.left < rectHazard.right - 20 &&
+                rectPilot.right > rectHazard.left + 20 &&
+                rectPilot.bottom > rectHazard.top + 20
+            ) {
+                gameOver();
+                return;
+            }
+
+            // ANIMAÇÃO DE CENÁRIO
+            el.road.style.left = (-(Date.now()/5) % 100) + 'px';
+
+            requestAnimationFrame(gameLoop);
         }
-        
-        document.getElementById('hi-score').innerText = GAME.high;
-        elOverlay.innerHTML = `
-            <h2 style="color: var(--p)">WASTED</h2>
-            <p style="font-size:20px">${GAME.score} KM</p>
-            <small style="margin-top:10px">CLIQUE PARA REPARAR</small>
-        `;
-        elOverlay.style.display = 'flex';
-    }
 
-    elZone.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        if(!GAME.active) {
-            GAME.active = true;
-            GAME.score = 0;
-            GAME.ox = -100;
-            GAME.py = 0;
-            elOverlay.style.display = 'none';
-            elScore.innerText = "00000";
-            runGame();
-        } else if(!GAME.jump) {
-            GAME.jump = true;
-            GAME.pVel = GAME.power;
+        function updateUI() {
+            el.km.innerText = state.score.toString().padStart(4, '0') + " KM";
+            
+            // Evolução de Veículo
+            if(state.score >= 1000) {
+                el.pilot.innerText = '🚛';
+                el.rank.innerText = 'TRUCKER';
+                el.rank.style.color = 'var(--neon-blue)';
+            } else if(state.score >= 400) {
+                el.pilot.innerText = '🚀';
+                el.rank.innerText = 'PILOT';
+                el.rank.style.color = 'var(--neon-green)';
+            } else {
+                el.pilot.innerText = '🏍️';
+                el.rank.innerText = 'NOOB';
+            }
         }
-    });
 
-    /* --- SISTEMA DE PROGRESSÃO --- */
-    let coffee = localStorage.getItem('t_coffee') || 0;
-    document.getElementById('c-num').innerText = coffee;
+        function gameOver() {
+            state.gameActive = false;
+            if(state.score > state.highScore) {
+                state.highScore = state.score;
+                localStorage.setItem('charlys_pro_hi', state.highScore);
+            }
+            el.hi.innerText = state.highScore;
+            el.overlay.innerHTML = `<h2 style="color:var(--neon-red)">WASTED</h2><p style="font-size:24px">${state.score} KM</p><small>TOQUE PARA REPARAR A TITAN</small>`;
+            el.overlay.style.display = 'flex';
+        }
 
-    function addCoffee() {
-        coffee++;
-        localStorage.setItem('t_coffee', coffee);
-        document.getElementById('c-num').innerText = coffee;
-        if(coffee >= 50) activateMedal('m-cafe');
-    }
+        function startGame() {
+            state.gameActive = true;
+            state.score = 0;
+            state.hazardX = -100;
+            state.playerY = 0;
+            el.overlay.style.display = 'none';
+            updateUI();
+            gameLoop();
+        }
 
-    function checkSocial() {
-        activateMedal('m-social');
-    }
+        el.trigger.addEventListener('touchstart', handleAction);
+        el.trigger.addEventListener('mousedown', handleAction);
 
-    function activateMedal(id) {
-        document.getElementById(id).classList.add('active');
-    }
+        function handleAction(e) {
+            e.preventDefault();
+            if(!state.gameActive) startGame();
+            else if(!state.isJumping) {
+                state.isJumping = true;
+                state.jumpVel = state.jumpPower;
+            }
+        }
 
-    // Carregamento Inicial de Medalhas
-    if(coffee >= 50) activateMedal('m-cafe');
-    if(GAME.high >= 1000) activateMedal('m-pilot');
-</script>
+        /**
+         * PROGRESSION SYSTEM
+         */
+        function addFuel() {
+            state.coffee++;
+            localStorage.setItem('charlys_coffee', state.coffee);
+            el.fuel.innerText = state.coffee;
+            
+            // Efeito visual de clique
+            el.fuel.style.transform = 'scale(1.5)';
+            setTimeout(() => el.fuel.style.transform = 'scale(1)', 100);
+        }
 
+    </script>
 </body>
 </html>
