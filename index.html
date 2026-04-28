@@ -3,46 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlys | Official Hub</title>
+    <title>Charlys | Hub Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #ff4b2b; --secondary: #00d2ff; --neon: #39ff14; --bg: #050505; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
         
-        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; }
+        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; pointer-events: none; }
 
-        /* BENTO GRID */
-        .container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 90%; max-width: 450px; }
+        .container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 92%; max-width: 450px; }
         
         .bento-item { 
-            background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(15px); border-radius: 20px; 
-            padding: 20px; border: 1px solid rgba(255,255,255,0.1); transition: 0.4s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+            background: rgba(20, 20, 20, 0.9); backdrop-filter: blur(15px); border-radius: 24px; 
+            padding: 20px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); position: relative;
         }
-        .bento-item:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 0 20px var(--primary); }
 
-        .profile-box { grid-column: span 2; text-align: center; }
-        .game-box { grid-column: span 2; padding: 0; height: 180px; }
-        .social-box { grid-column: span 1; display: flex; flex-direction: column; gap: 10px; }
-        .coffee-box { grid-column: span 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .profile-box { grid-column: span 2; text-align: center; border-bottom: 3px solid var(--primary); }
+        .game-box { grid-column: span 2; padding: 0; height: 160px; overflow: hidden; border: 2px solid #333; }
+        .social-box { grid-column: span 1; display: flex; flex-direction: column; gap: 8px; }
+        .coffee-box { grid-column: span 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
 
-        /* BADGES */
-        #badges { display: flex; justify-content: center; gap: 10px; margin-top: 10px; min-height: 30px; }
-        .badge { font-size: 18px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
-        .badge.active { filter: grayscale(0); opacity: 1; transform: scale(1.2); }
-
-        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; }
-        .btn { padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: 0.3s; }
+        .profile-img { width: 85px; height: 85px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+        .btn { padding: 10px; border-radius: 12px; text-decoration: none; font-weight: bold; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; }
         .btn-insta { background: #E1306C; } .btn-whats { background: #25D366; } .btn-yt { background: #ff0000; }
 
-        /* MINI GAME BENTO */
-        #game-container { width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 20px; cursor: pointer; }
-        #player { position: absolute; bottom: 10px; left: 30px; font-size: 35px; transform: scaleX(-1); z-index: 2; transition: 0.2s; }
-        #obstacle { position: absolute; bottom: 10px; right: -50px; font-size: 25px; }
-        #road { position: absolute; bottom: 0; width: 200%; height: 2px; background: repeating-linear-gradient(90deg, #333 0, #333 20px, transparent 20px, transparent 40px); }
-        .moving { animation: road-move 0.5s linear infinite; }
-        @keyframes road-move { from { left: 0; } to { left: -40px; } }
-        #score-display { position: absolute; top: 10px; left: 15px; font-weight: bold; font-size: 14px; text-shadow: 0 0 5px #000; }
+        /* ENGINE DO JOGO - SEM BUGS */
+        #game-container { width: 100%; height: 100%; position: relative; background: #000; cursor: pointer; touch-action: none; }
+        #player { position: absolute; bottom: 0; left: 40px; font-size: 35px; transform: scaleX(-1); z-index: 10; line-height: 1; }
+        #obstacle { position: absolute; bottom: 0; right: -50px; font-size: 25px; z-index: 10; line-height: 1; }
+        #road { position: absolute; bottom: 0; width: 200%; height: 2px; background: repeating-linear-gradient(90deg, #444 0, #444 20px, transparent 20px, transparent 40px); }
+        .road-moving { animation: road-anim 0.5s linear infinite; }
+        @keyframes road-anim { from { left: 0; } to { left: -40px; } }
+        #msg { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; color: var(--neon); font-weight: bold; text-align: center; z-index: 20; }
     </style>
 </head>
 <body>
@@ -51,129 +44,139 @@
 
 <div class="container">
     <div class="bento-item profile-box">
-        <div id="badges">
-            <span class="badge" id="badge-coffee" title="Viciado em Cafeína">☕</span>
-            <span class="badge" id="badge-pilot" title="Piloto Lendário">🏆</span>
-            <span class="badge" id="badge-social" title="Explorador">🌍</span>
-        </div>
         <img src="20260207_132012[1].jpg" class="profile-img">
         <h2 style="margin: 10px 0 0;">CHARLYS</h2>
         <p style="font-size: 12px; color: var(--secondary); margin: 5px 0;">@inimigo_do_amigo.ofc</p>
     </div>
 
-    <div class="bento-item game-box" onclick="handleAction(event)" ontouchstart="handleAction(event)">
+    <div class="bento-item game-box" id="game-click-area">
         <div id="game-container">
-            <div id="score-display">0 KM | HI: <span id="hi-val">0</span></div>
+            <div id="score-text" style="position: absolute; top: 10px; left: 15px; font-weight: bold; z-index: 15;">0 KM</div>
+            <div id="msg">TOQUE PARA ACELERAR</div>
             <div id="road"></div>
             <div id="player">🏍️</div>
             <div id="obstacle">🚧</div>
-            <div id="game-start-msg" style="position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--neon); text-align: center;">TOQUE PARA ACELERAR</div>
         </div>
     </div>
 
     <div class="bento-item social-box">
-        <a href="https://instagram.com/inimigo_do_amigo.ofc" class="btn btn-insta" onclick="markLink('insta')"><i class="fab fa-instagram"></i></a>
-        <a href="https://wa.me/5569992919920" class="btn btn-whats" onclick="markLink('whats')"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://youtu.be/7SGmdnFT3oU" class="btn btn-yt" onclick="markLink('yt')"><i class="fab fa-youtube"></i></a>
+        <a href="https://instagram.com/inimigo_do_amigo.ofc" class="btn btn-insta" target="_blank">Instagram</a>
+        <a href="https://wa.me/5569992919920" class="btn btn-whats" target="_blank">WhatsApp</a>
     </div>
 
     <div class="bento-item coffee-box" onclick="addCoffee()">
-        <span style="font-size: 30px;">☕</span>
-        <span id="coffee-count" style="font-weight: bold; font-size: 18px; margin-top: 5px;">0</span>
-        <span style="font-size: 10px; opacity: 0.5;">CAFÉS</span>
+        <span style="font-size: 25px;">☕</span>
+        <span id="coffee-count" style="font-weight: bold;">0</span>
+        <span style="font-size: 10px; opacity: 0.6;">CAFÉS</span>
     </div>
 </div>
 
 <script>
-    // --- PARTÍCULAS PARALLAX ---
+    // --- FUNDO PARALLAX ---
     const canvas = document.getElementById('canvas-bg');
     const ctx = canvas.getContext('2d');
-    let pts = [], mouse = {x: null, y: null};
+    let pts = [];
     function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.onmousemove = (e) => { mouse.x = e.x; mouse.y = e.y; };
     class Pt {
-        constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.baseX = this.x; this.baseY = this.y; this.size = 1.5; }
-        draw() {
-            ctx.fillStyle = "#444";
-            ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
-        }
-        update() {
-            let dx = mouse.x - this.x, dy = mouse.y - this.y, dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 100) { this.x -= dx/10; this.y -= dy/10; }
-            else { 
-                if (this.x !== this.baseX) this.x -= (this.x - this.baseX)/20;
-                if (this.y !== this.baseY) this.y -= (this.y - this.baseY)/20;
-            }
-        }
+        constructor() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.v = Math.random()*0.5 + 0.2; }
+        draw() { ctx.fillStyle = "#333"; ctx.beginPath(); ctx.arc(this.x, this.y, 1, 0, Math.PI*2); ctx.fill(); }
+        update() { this.y += this.v; if(this.y > canvas.height) this.y = 0; }
     }
-    for(let i=0; i<80; i++) pts.push(new Pt());
+    for(let i=0; i<50; i++) pts.push(new Pt());
     function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); pts.forEach(p=>{p.update(); p.draw();}); requestAnimationFrame(anim); }
     init(); anim();
 
-    // --- MINI GAME & EVOLUÇÃO ---
-    let playing = false, score = 0, hi = localStorage.getItem('hi') || 0, jumping = false;
-    const player = document.getElementById('player'), obs = document.getElementById('obstacle'), road = document.getElementById('road');
-    document.getElementById('hi-val').innerText = hi;
+    // --- GAME LOGIC (FIXED) ---
+    let playing = false, score = 0, jumping = false, yVel = 0, playerY = 0;
+    const gravity = 0.6, jumpForce = -12;
+    
+    const playerEl = document.getElementById('player'),
+          obsEl = document.getElementById('obstacle'),
+          roadEl = document.getElementById('road'),
+          msgEl = document.getElementById('msg'),
+          scoreEl = document.getElementById('score-text'),
+          gameArea = document.getElementById('game-click-area');
 
-    function handleAction(e) { e.preventDefault(); if(!playing) start(); else jump(); }
+    function handleInput(e) {
+        e.preventDefault();
+        if (!playing) { start(); }
+        else if (!jumping) { 
+            jumping = true; 
+            yVel = jumpForce; 
+        }
+    }
+
+    gameArea.addEventListener('mousedown', handleInput);
+    gameArea.addEventListener('touchstart', handleInput);
+
     function start() {
-        playing = true; score = 0;
-        document.getElementById('game-start-msg').style.display = 'none';
-        road.classList.add('moving'); loop();
+        playing = true; score = 0; playerY = 0; yVel = 0; jumping = false;
+        msgEl.style.display = 'none';
+        roadEl.classList.add('road-moving');
+        obsEl.style.right = '-50px';
+        update();
     }
-    function jump() {
-        if(jumping) return; jumping = true;
-        let alt = 10;
-        let up = setInterval(() => {
-            if(alt >= 100) { clearInterval(up);
-                let down = setInterval(() => {
-                    if(alt <= 10) { clearInterval(down); jumping = false; }
-                    alt -= 8; player.style.bottom = alt + 'px';
-                }, 15);
+
+    function update() {
+        if (!playing) return;
+
+        // Física do Pulo
+        if (jumping) {
+            yVel += gravity;
+            playerY -= yVel;
+            if (playerY <= 0) {
+                playerY = 0;
+                jumping = false;
+                yVel = 0;
             }
-            alt += 10; player.style.bottom = alt + 'px';
-        }, 15);
-    }
-    function loop() {
-        if(!playing) return;
-        let oR = parseInt(window.getComputedStyle(obs).right);
-        let pB = parseInt(player.style.bottom) || 10;
+        }
+        playerEl.style.bottom = playerY + 'px';
+
+        // Movimento do Obstáculo
+        let obsRight = parseFloat(obsEl.style.right) || -50;
+        let speed = 7 + (score / 150);
         
-        // Evolução do Veículo
-        if(score < 200) player.innerText = '🏍️';
-        else if(score < 500) player.innerText = '🚀';
-        else { player.innerText = '🚛'; checkBadge('pilot'); }
+        if (obsRight > 460) {
+            obsRight = -50;
+            score += 10;
+            scoreEl.innerText = score + " KM";
+        } else {
+            obsRight += speed;
+        }
+        obsEl.style.right = obsRight + 'px';
 
-        if(oR > 450) { obs.style.right = '-50px'; score += 10; document.getElementById('score-display').innerHTML = `${score} KM | HI: ${hi}`; }
-        else { obs.style.right = (oR + (8 + score/150)) + 'px'; }
+        // COLISÃO PRECISA
+        // No grid bento (450px), o player está a ~40px da esquerda. 
+        // 450 - 40 - largura_moto = área de impacto
+        if (obsRight > 320 && obsRight < 370 && playerY < 35) {
+            gameOver();
+            return;
+        }
 
-        if(oR > 320 && oR < 360 && pB < 45) die();
-        else requestAnimationFrame(loop);
+        // Troca de Veículo
+        if (score >= 500) playerEl.innerText = '🚛';
+        else if (score >= 200) playerEl.innerText = '🚀';
+        else playerEl.innerText = '🏍️';
+
+        requestAnimationFrame(update);
     }
-    function die() {
-        playing = false; road.classList.remove('moving');
-        if(score > hi) { hi = score; localStorage.setItem('hi', hi); document.getElementById('hi-val').innerText = hi; }
-        document.getElementById('game-start-msg').innerHTML = `BATEU! <br> ${score} KM <br> RECOMEÇAR`;
-        document.getElementById('game-start-msg').style.display = 'flex';
-        player.style.bottom = '10px';
+
+    function gameOver() {
+        playing = false;
+        roadEl.classList.remove('road-moving');
+        let hi = localStorage.getItem('hi') || 0;
+        if (score > hi) localStorage.setItem('hi', score);
+        msgEl.innerHTML = `BATEU!<br>${score} KM<br>RECORDE: ${localStorage.getItem('hi')}<br>TENTE DE NOVO`;
+        msgEl.style.display = 'flex';
     }
 
-    // --- CONQUISTAS ---
-    let clickedLinks = {insta: false, whats: false, yt: false};
     function addCoffee() {
-        let count = parseInt(localStorage.getItem('coffees') || 0) + 1;
-        localStorage.setItem('coffees', count);
-        document.getElementById('coffee-count').innerText = count;
-        if(count >= 50) checkBadge('coffee');
+        let c = parseInt(localStorage.getItem('coffees') || 0) + 1;
+        localStorage.setItem('coffees', c);
+        document.getElementById('coffee-count').innerText = c;
     }
-    function markLink(l) { 
-        clickedLinks[l] = true; 
-        if(clickedLinks.insta && clickedLinks.whats && clickedLinks.yt) checkBadge('social'); 
-    }
-    function checkBadge(id) { document.getElementById('badge-'+id).classList.add('active'); }
-
-    // Início
     document.getElementById('coffee-count').innerText = localStorage.getItem('coffees') || 0;
 </script>
+
 </body>
 </html>
