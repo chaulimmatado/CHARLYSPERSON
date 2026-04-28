@@ -2,204 +2,230 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHARLYS_GOD_MODE // PROT_X</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CHARLYS_OS // MULTI-CORE</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;800&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+
     <style>
-        :root { --p: #00f2ff; --s: #ff0055; --a: #bcff00; --bg: #000; --glass: rgba(0, 0, 0, 0.85); }
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
-        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
+        :root {
+            --p: #00f2ff; --s: #ff0055; --a: #bcff00;
+            --bg: #050508; --glass: rgba(10, 10, 15, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* CANVAS DE FUNDO - CAMPO VETORIAL */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-
-        /* OVERLAY DE SCANLINE (EFEITO CRT) */
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%; pointer-events: none; z-index: 1000;
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .main-grid {
-            display: grid; grid-template-columns: 320px 1fr 320px; grid-template-rows: 60px 1fr 180px;
-            gap: 15px; height: 100vh; padding: 15px;
+        /* --- BACKGROUND DINÂMICO --- */
+        #starfield { position: fixed; top:0; left:0; z-index: -1; }
+
+        /* --- HEADER RESPONSIVO --- */
+        .top-nav {
+            height: 60px; background: var(--glass);
+            border-bottom: 1px solid var(--p);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
-        .panel { 
-            background: var(--glass); border: 1px solid rgba(0, 242, 255, 0.2); 
-            border-radius: 4px; position: relative; overflow: hidden;
-            backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        /* --- LAYOUT GRID FLEXÍVEL --- */
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 15px;
+            padding: 15px;
+            height: calc(100vh - 60px);
+            transition: 0.5s;
         }
 
-        .header { grid-column: span 3; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 2px solid var(--p); }
-        .side-l { grid-row: span 2; display: flex; flex-direction: column; gap: 15px; }
-        .viewport { position: relative; border: 2px solid var(--s); background: #000; }
-        .side-r { grid-row: span 2; display: flex; flex-direction: column; gap: 15px; }
-        .console { grid-column: 2; border-color: var(--a); color: var(--a); padding: 10px; font-size: 11px; overflow-y: auto; }
-
-        /* AVATAR MORPH */
-        .avatar-box {
-            width: 180px; height: 180px; margin: 20px auto;
-            border: 2px solid var(--p); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            animation: morph 6s infinite alternate; overflow: hidden; box-shadow: 0 0 30px var(--p);
+        .panel {
+            background: var(--glass);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        @keyframes morph { 0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; } 100% { border-radius: 50% 50% 20% 80% / 80% 20% 80% 20%; } }
 
+        /* --- ADAPTAÇÃO PARA CELULAR (BREAKPOINT) --- */
+        @media (max-width: 1100px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+                overflow-y: auto;
+            }
+            .side-panel { display: none; } /* Esconde laterais no mobile para focar no jogo */
+            .mobile-only { display: block; }
+        }
+
+        /* --- GAME VIEWPORT ADAPTATIVO --- */
+        .viewport {
+            background: #000;
+            border: 1px solid var(--s);
+            position: relative;
+            min-height: 300px;
+        }
+
+        canvas { width: 100%; height: 100%; display: block; }
+
+        /* --- CONTROLES TOUCH (SÓ APARECEM NO MOBILE) --- */
+        .touch-controls {
+            display: none;
+            position: absolute; bottom: 20px; width: 100%;
+            padding: 0 30px; justify-content: center;
+        }
+        @media (max-width: 1100px) { .touch-controls { display: flex; } }
+
+        .jump-btn {
+            width: 80px; height: 80px; background: rgba(255, 0, 85, 0.3);
+            border: 2px solid var(--s); border-radius: 50%;
+            color: white; font-size: 24px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- BOTÕES CYBER --- */
         .btn {
             background: transparent; border: 1px solid var(--p); color: var(--p);
-            padding: 12px; width: 100%; font-family: 'Orbitron'; font-weight: 900;
-            cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-bottom: 10px;
+            padding: 12px; font-family: 'Orbitron'; cursor: pointer;
+            text-decoration: none; text-align: center; margin: 5px;
+            font-size: 12px; transition: 0.3s;
         }
-        .btn:hover { background: var(--p); color: #000; box-shadow: 0 0 20px var(--p); transform: scale(1.02); }
+        .btn:active { background: var(--p); color: #000; }
 
-        #titan-game { width: 100%; height: 100%; }
-        .hud-layer { position: absolute; top: 20px; left: 20px; pointer-events: none; }
-        .score-num { font-size: 48px; font-family: 'Orbitron'; color: #fff; text-shadow: 0 0 10px var(--p); }
+        /* --- ANIMATIONS --- */
+        .glow { animation: pulse 2s infinite alternate; }
+        @keyframes pulse { from { box-shadow: 0 0 5px var(--p); } to { box-shadow: 0 0 20px var(--p); } }
     </style>
 </head>
 <body onload="init()">
 
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="starfield"></canvas>
 
-    <div class="main-grid">
-        <header class="panel header">
-            <div style="font-family: 'Syncopate'; color: var(--p);">CHARLYS_V6_CORE</div>
-            <div id="timer" style="font-family: 'Orbitron'; color: var(--a); font-size: 20px;">00:00:00</div>
-            <div style="font-size: 10px;">LATENCY: 12ms | MEM: 4.2GB</div>
-        </header>
+    <header class="top-nav">
+        <div style="font-family: 'Orbitron'; color: var(--p); font-weight: 900; font-size: 14px;">CHARLYS_HYBRID_OS</div>
+        <div id="clock" style="color: var(--a);">00:00:00</div>
+    </header>
 
-        <aside class="side-l">
-            <div class="panel" style="flex: 2; padding: 20px; text-align: center;">
-                <div class="avatar-box"><img src="20260207_132012[1].jpg" style="width:100%; height:100%; object-fit:cover;"></div>
-                <h2 style="font-family: 'Orbitron'; letter-spacing: 4px;">CHARLYS</h2>
-                <p style="color: var(--s); font-size: 10px; margin-bottom: 20px;">[ SUPREME_OPERATOR ]</p>
-                <button class="btn" onclick="window.open('https://instagram.com/inimigo_do_amigo.ofc')">INSTAGRAM</button>
-                <button class="btn" onclick="window.open('https://wa.me/5569992919920')">WHATSAPP</button>
-            </div>
-        </aside>
-
-        <main class="panel viewport">
-            <div class="hud-layer">
-                <div style="font-size: 10px; color: var(--p);">SYSTEM_DISTANCE</div>
-                <div id="score" class="score-num">0000</div>
-            </div>
-            <canvas id="titan-game"></canvas>
-            <div id="start-msg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
-                <h1 style="font-family:'Orbitron'; font-size:50px; color:var(--p); margin-bottom:20px;">READY?</h1>
-                <button onclick="startGame()" class="btn" style="width:200px;">ENGAGE</button>
-            </div>
-        </main>
-
-        <aside class="side-r">
-            <div class="panel" style="padding:15px;">
-                <h4 style="color:var(--a); font-size:12px; margin-bottom:10px;">NEON_AUDIO_STREAM</h4>
-                <div id="viz" style="display:flex; gap:3px; height:40px; align-items:flex-end; margin-bottom:15px;"></div>
-                <button class="btn" onclick="toggleMusic()" id="m-btn">PLAY_RADIO</button>
-                <audio id="audio" loop src="https://stream.nightride.fm/nightride.mp3"></audio>
-            </div>
-            <div class="panel" style="flex:1; padding:15px;">
-                <h4 style="color:var(--p); font-size:12px;">ACHIEVEMENTS</h4>
-                <div id="ach-list" style="font-size:11px; margin-top:10px;">
-                    <div style="opacity:0.3; margin-bottom:5px;"><i class="fas fa-lock"></i> SONIC_BOOM (5000m)</div>
-                    <div style="color:var(--a); margin-bottom:5px;"><i class="fas fa-check"></i> ROOT_ACCESS_GRANTED</div>
+    <main class="main-container">
+        
+        <aside class="panel side-panel">
+            <div style="padding: 20px; text-align: center;">
+                <img src="20260207_132012[1].jpg" style="width: 120px; border-radius: 50%; border: 2px solid var(--p); margin-bottom: 15px;">
+                <h3 style="font-family: 'Orbitron';">CHARLYS</h3>
+                <p style="font-size: 10px; color: var(--s);">MODO: MULTIPLATAFORMA</p>
+                <div style="margin-top: 20px; display: flex; flex-direction: column;">
+                    <a href="https://instagram.com/inimigo_do_amigo.ofc" class="btn">INSTAGRAM</a>
+                    <a href="https://wa.me/5569992919920" class="btn">WHATSAPP</a>
                 </div>
             </div>
         </aside>
 
-        <footer class="panel console" id="log">
-            <div>>> INICIALIZANDO CHARLYS_OS_X...</div>
-            <div>>> KERNEL LOADED AT 0x88234...</div>
-        </footer>
-    </div>
+        <section class="panel viewport glow">
+            <canvas id="game"></canvas>
+            <div id="ui-overlay" style="position: absolute; top: 20px; left: 20px;">
+                <div id="score" style="font-family: 'Orbitron'; font-size: 30px;">0000</div>
+            </div>
+            
+            <div class="touch-controls">
+                <div class="jump-btn" onclick="jump()"><i class="fas fa-arrow-up"></i></div>
+            </div>
+
+            <div id="boot-screen" style="position: absolute; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <h1 style="font-family: 'Orbitron'; color: var(--p); margin-bottom: 20px;">SYSTEM READY</h1>
+                <button onclick="start()" class="btn" style="width: 200px;">START_SIMULATION</button>
+            </div>
+        </section>
+
+        <aside class="panel side-panel">
+            <div style="padding: 20px;">
+                <h4 style="font-size: 12px; color: var(--a);">ENGINE_STATS</h4>
+                <div id="stats" style="font-size: 10px; margin-top: 10px; line-height: 2;">
+                    - RESOLUTION: AUTO_DETECT<br>
+                    - PLATFORM: <span id="platform-id">DEVICE</span><br>
+                    - KERNEL: V6.0_HYBRID
+                </div>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
+                <button class="btn" onclick="toggleAudio()">RADIO: ON/OFF</button>
+                <audio id="bg-audio" loop src="https://stream.nightride.fm/nightride.mp3"></audio>
+            </div>
+        </aside>
+
+    </main>
 
     <script>
-        const log = (m) => { const l = document.getElementById('log'); l.innerHTML += `<div>>> ${m}</div>`; l.scrollTop = l.scrollHeight; };
-        
-        // --- BACKGROUND VECTOR FIELD ---
-        const bg = document.getElementById('bg-canvas');
-        const bctx = bg.getContext('2d');
-        let dots = [];
-        function initBg() {
-            bg.width = window.innerWidth; bg.height = window.innerHeight;
-            dots = [];
-            for(let i=0; i<100; i++) dots.push({x: Math.random()*bg.width, y: Math.random()*bg.height, r: Math.random()*2});
-        }
-        function drawBg() {
-            bctx.fillStyle = 'rgba(0,0,0,0.1)'; bctx.fillRect(0,0,bg.width,bg.height);
-            bctx.fillStyle = 'rgba(0,242,255,0.3)';
-            dots.forEach(d => {
-                d.y -= 1; if(d.y < 0) d.y = bg.height;
-                bctx.beginPath(); bctx.arc(d.x, d.y, d.r, 0, Math.PI*2); bctx.fill();
-            });
-            requestAnimationFrame(drawBg);
-        }
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        let gameActive = false, score = 0, y = 0, vy = 0, obs = [], frame = 0;
 
-        // --- TITAN GAME ENGINE ---
-        const gCanv = document.getElementById('titan-game');
-        const gCtx = gCanv.getContext('2d');
-        let gameActive = false, score = 0, playerY = 0, playerV = 0, obs = [], frame = 0;
-
-        function startGame() {
-            gameActive = true; score = 0; obs = []; playerY = 0;
-            document.getElementById('start-msg').style.display = 'none';
-            log("SIMULADOR TITAN ATIVADO.");
-            gameLoop();
+        function init() {
+            // Relógio
+            setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+            document.getElementById('platform-id').innerText = /Mobi|Android/i.test(navigator.userAgent) ? "MOBILE" : "DESKTOP";
+            
+            // Estrelas de fundo
+            const sCanvas = document.getElementById('starfield');
+            const sCtx = sCanvas.getContext('2d');
+            sCanvas.width = window.innerWidth; sCanvas.height = window.innerHeight;
+            function drawStars() {
+                sCtx.fillStyle = 'black'; sCtx.fillRect(0,0,sCanvas.width, sCanvas.height);
+                sCtx.fillStyle = 'white';
+                for(let i=0; i<100; i++) sCtx.fillRect(Math.random()*sCanvas.width, Math.random()*sCanvas.height, 1, 1);
+                requestAnimationFrame(drawStars);
+            }
+            drawStars();
         }
 
-        function gameLoop() {
+        function start() {
+            gameActive = true; score = 0; obs = [];
+            document.getElementById('boot-screen').style.display = 'none';
+            loop();
+        }
+
+        function jump() { if(y === 0) vy = -15; }
+
+        function loop() {
             if(!gameActive) return;
-            gCanv.width = gCanv.parentElement.offsetWidth; gCanv.height = gCanv.parentElement.offsetHeight;
-            const floor = gCanv.height - 50;
-            gCtx.clearRect(0,0,gCanv.width, gCanv.height);
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+            const ground = canvas.height - 40;
+            ctx.clearRect(0,0,canvas.width, canvas.height);
 
-            // Gravidade
-            playerV += 0.8; playerY += playerV;
-            if(playerY > 0) { playerY = 0; playerV = 0; }
+            // Física
+            vy += 0.8; y += vy;
+            if(y > 0) { y = 0; vy = 0; }
 
-            // Desenhar Moto
-            gCtx.font = "50px Arial";
-            gCtx.fillText("🏍️", 80, floor + playerY);
+            // Desenhar Moto (Adaptativo)
+            ctx.font = canvas.width < 500 ? "30px Arial" : "50px Arial";
+            ctx.fillText("🏍️", 50, ground + y);
 
             // Obstáculos
-            if(frame % 80 === 0) obs.push({x: gCanv.width, type: "🚧"});
+            if(frame % 100 === 0) obs.push({x: canvas.width, t: "🚧"});
             obs.forEach((o, i) => {
-                o.x -= 8;
-                gCtx.fillText(o.type, o.x, floor);
-                if(o.x > 80 && o.x < 130 && playerY > -30) gameOver();
-                if(o.x < -50) { obs.splice(i,1); score += 100; }
+                o.x -= 7;
+                ctx.fillText(o.t, o.x, ground);
+                if(o.x > 50 && o.x < 90 && y > -20) { gameActive = false; document.getElementById('boot-screen').style.display = 'flex'; }
+                if(o.x < -50) { obs.splice(i, 1); score += 10; }
             });
 
             document.getElementById('score').innerText = score.toString().padStart(4, '0');
-            frame++; requestAnimationFrame(gameLoop);
+            frame++; requestAnimationFrame(loop);
         }
 
-        function gameOver() {
-            gameActive = false;
-            document.getElementById('start-msg').style.display = 'block';
-            document.getElementById('start-msg').innerHTML = `<h1 style="color:var(--s)">CRASH!</h1><button onclick="startGame()" class="btn">REBOOT</button>`;
-            log("SISTEMA CORROMPIDO NO IMPACTO.");
+        function toggleAudio() {
+            const a = document.getElementById('bg-audio');
+            a.paused ? a.play() : a.pause();
         }
 
-        window.onkeydown = (e) => { if(e.code === 'Space' && playerY === 0) playerV = -18; };
-
-        // --- AUDIO VIZ ---
-        const audio = document.getElementById('audio');
-        const viz = document.getElementById('viz');
-        for(let i=0; i<20; i++) viz.innerHTML += `<div class="v-bar" style="width:5px; background:var(--p); height:5px;"></div>`;
-        
-        function toggleMusic() {
-            if(audio.paused) { 
-                audio.play(); log("STREAM DE ÁUDIO ONLINE."); 
-                document.querySelectorAll('.v-bar').forEach(b => b.style.animation = `morph ${Math.random()+0.2}s infinite`);
-            } else { audio.pause(); }
-        }
-
-        function init() {
-            initBg(); drawBg();
-            setInterval(() => document.getElementById('timer').innerText = new Date().toLocaleTimeString(), 1000);
-            log("CHARLYS_OS_X PRONTO PARA OPERAÇÃO.");
-        }
+        window.onkeydown = (e) => { if(e.code === 'Space') jump(); };
     </script>
 </body>
 </html>
