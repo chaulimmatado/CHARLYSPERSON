@@ -3,521 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Charlys | The Legendary Driver Hub</title>
+    <title>CHARLYS | ULTRA GAMER HUB v2.0</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- DESIGN SYSTEM: CYBER-BENTO --- */
+        /* --- CORE DESIGN SYSTEM --- */
         :root {
-            --neon-red: #ff4b2b;
-            --neon-blue: #00d2ff;
-            --neon-green: #39ff14;
-            --deep-black: #050505;
-            --glass-bg: rgba(10, 10, 10, 0.9);
-            --card-border: rgba(255, 255, 255, 0.05);
-            --glow: 0 0 15px rgba(255, 75, 43, 0.5);
-            --font-h: 'Orbitron', sans-serif;
-            --font-b: 'Rajdhani', sans-serif;
+            --primary: #ff3c00;
+            --secondary: #00f2ff;
+            --accent: #bcff00;
+            --bg-deep: #020202;
+            --glass: rgba(15, 15, 15, 0.85);
+            --border-glow: rgba(255, 60, 0, 0.3);
+            --font-head: 'Syncopate', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        /* Reset & Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            background-color: var(--deep-black);
-            color: #f0f0f0;
-            font-family: var(--font-b);
+            background: var(--bg-deep);
+            color: #fff;
+            font-family: var(--font-body);
             overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            padding: 40px 15px;
         }
 
-        /* Canvas de Fundo - Space Engine */
-        #render-bg {
+        /* Hi-Tech Background Canvas */
+        #core-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            filter: contrast(1.2);
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
         }
 
-        /* Layout Grid Master */
-        .container {
+        /* --- BENTO GRID ARCHITECTURE --- */
+        .hub-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: auto;
             gap: 20px;
             width: 100%;
-            max-width: 1000px;
-            animation: appEntry 1s cubic-bezier(0.19, 1, 0.22, 1);
+            max-width: 1100px;
+            z-index: 10;
         }
 
-        @keyframes appEntry {
-            from { opacity: 0; transform: scale(0.9) translateY(50px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        /* Base dos Cards Bento */
-        .bento-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--card-border);
-            border-radius: 40px;
+        .bento-item {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 45px;
             padding: 30px;
             position: relative;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-        }
-
-        .bento-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transition: 0.5s;
-        }
-
-        .bento-card:hover::before { left: 100%; }
-
-        .bento-card:hover {
-            transform: translateY(-12px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
-        }
-
-        /* --- PERFIL HEADER --- */
-        .header-profile {
-            grid-column: span 4;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
             display: flex;
+            flex-direction: column;
+        }
+
+        .bento-item:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 0 50px rgba(255, 60, 0, 0.2);
+        }
+
+        /* Profile Block */
+        .profile-hero {
+            grid-column: span 4;
+            flex-direction: row;
             align-items: center;
             gap: 40px;
-            padding: 40px;
-            background: linear-gradient(135deg, rgba(20,20,20,0.8) 0%, rgba(5,5,5,0.9) 100%);
+            background: linear-gradient(135deg, rgba(20,20,20,0.95) 0%, rgba(5,5,5,0.95) 100%);
+            border-left: 5px solid var(--primary);
         }
 
-        .avatar-box {
+        .avatar-wrapper {
             position: relative;
-            width: 180px; height: 180px;
+            width: 200px; height: 200px;
             flex-shrink: 0;
         }
 
-        .avatar-main {
+        .avatar-frame {
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            border: 2px dashed var(--primary);
+            animation: rotateCW 10s linear infinite;
+        }
+
+        .avatar-img {
             width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid var(--deep-black);
-            z-index: 10;
+            border: 8px solid var(--bg-deep);
             position: relative;
+            z-index: 5;
         }
 
-        .ring-anim {
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, var(--neon-red), var(--neon-blue), var(--neon-green), var(--neon-red));
-            animation: spin 4s linear infinite;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .profile-info h1 {
-            font-family: var(--font-h);
-            font-size: 48px;
-            font-weight: 900;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, #888);
+        .hero-text h1 {
+            font-family: var(--font-head);
+            font-size: 50px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            background: linear-gradient(to bottom, #fff 40%, #555);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .badge-container {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .badge-pill {
-            padding: 8px 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--neon-blue);
-            border: 1px solid rgba(0, 210, 255, 0.2);
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        /* --- GAME SECTION: TITAN CORE ENGINE --- */
-        .game-area {
+        /* --- GAME ENGINE UI --- */
+        .game-console {
             grid-column: span 4;
-            height: 350px;
-            padding: 0;
+            height: 450px;
             background: #000;
-            border: 4px solid #111;
+            padding: 0;
+            border: 2px solid #1a1a1a;
+            position: relative;
+            cursor: pointer;
         }
 
-        #game-canvas-wrap {
+        #game-viewport {
             width: 100%; height: 100%;
             position: relative;
             overflow: hidden;
         }
 
-        .game-ui {
+        .hud-top {
             position: absolute;
-            top: 30px; left: 30px;
+            top: 30px; left: 30px; right: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             z-index: 100;
         }
 
-        .km-counter {
-            font-family: 'Orbitron';
-            font-size: 32px;
-            color: var(--neon-green);
-            text-shadow: 0 0 20px var(--neon-green);
+        .km-badge {
+            background: rgba(0,0,0,0.8);
+            padding: 10px 25px;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent);
+            font-family: var(--font-head);
+            font-size: 24px;
         }
 
-        #pilot-sprite {
+        #pilot {
             position: absolute;
-            bottom: 40px; left: 100px;
-            font-size: 70px;
+            bottom: 50px; left: 100px;
+            font-size: 80px;
             z-index: 50;
-            transition: transform 0.1s;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            filter: drop-shadow(0 0 15px var(--secondary));
+            will-change: transform;
         }
 
-        .road-system {
+        .obstacle {
             position: absolute;
-            bottom: 0; width: 200%; height: 10px;
-            background: repeating-linear-gradient(90deg, #333 0, #333 50px, transparent 50px, transparent 100px);
+            bottom: 50px; right: -120px;
+            font-size: 50px;
+            z-index: 50;
         }
 
-        .game-overlay-screen {
+        .road-anim {
             position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 200;
+            bottom: 0; width: 200%; height: 12px;
+            background: repeating-linear-gradient(90deg, #222 0, #222 60px, #444 60px, #444 120px);
+        }
+
+        /* --- SOCIALS & STATS --- */
+        .social-grid {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            height: 100%;
+            border-radius: 30px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-        }
-
-        /* --- INFO CARDS --- */
-        .card-sm { grid-column: span 1; text-align: center; }
-        .card-md { grid-column: span 2; }
-
-        .stat-val {
-            font-family: var(--font-h);
-            font-size: 36px;
-            display: block;
-            margin: 10px 0;
-        }
-
-        .btn-action {
-            width: 100%;
-            padding: 20px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            font-family: var(--font-h);
-            font-weight: 900;
-            font-size: 14px;
-            transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
             text-decoration: none;
-            color: #fff;
+            transition: 0.3s;
         }
 
-        .ig-btn { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
-        .wa-btn { background: #25D366; }
-        
-        .coffee-btn {
-            background: #6f4e37;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        .btn-insta { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); }
+        .btn-whats { background: #25D366; }
+
+        .stat-card { text-align: center; justify-content: center; }
+        .stat-num { font-family: var(--font-head); font-size: 40px; color: var(--primary); }
+        .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; }
+
+        /* Notification System */
+        #notify {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            z-index: 1000;
         }
 
-        /* --- MOBILE ADAPTATION --- */
-        @media (max-width: 768px) {
-            .container { grid-template-columns: repeat(2, 1fr); }
-            .header-profile { grid-column: span 2; flex-direction: column; text-align: center; }
-            .game-area { grid-column: span 2; height: 250px; }
-            .card-md { grid-column: span 2; }
-            .profile-info h1 { font-size: 32px; }
+        .toast {
+            background: var(--primary);
+            padding: 15px 30px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: 700;
+            animation: slideIn 0.5s ease-out;
         }
 
+        @keyframes rotateCW { 100% { transform: rotate(360deg); } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .hub-container { grid-template-columns: repeat(2, 1fr); }
+            .profile-hero { grid-column: span 2; flex-direction: column; text-align: center; padding: 50px 20px; }
+            .game-console { grid-column: span 2; height: 300px; }
+            .hero-text h1 { font-size: 30px; }
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="render-bg"></canvas>
+<canvas id="core-canvas"></canvas>
+<div id="notify"></div>
 
-    <div class="container">
-        
-        <header class="bento-card header-profile">
-            <div class="avatar-box">
-                <div class="ring-anim"></div>
-                <img src="20260207_132012[1].jpg" class="avatar-main" alt="Charlys Logo">
-            </div>
-            <div class="profile-info">
-                <h1>Charlys</h1>
-                <p style="letter-spacing: 2px; opacity: 0.7; font-weight: 700;">SUPREME PILOT & DEVELOPER</p>
-                <div class="badge-container">
-                    <div class="badge-pill" id="b-1"><i class="fas fa-bolt"></i> TITAN 98</div>
-                    <div class="badge-pill" id="b-2"><i class="fas fa-truck"></i> ETS2 PRO</div>
-                    <div class="badge-pill" id="b-3"><i class="fas fa-code"></i> HUB ELITE</div>
-                </div>
-            </div>
-        </header>
-
-        <main class="bento-card game-area" id="game-trigger">
-            <div id="game-canvas-wrap">
-                <div class="game-ui">
-                    <div class="km-counter" id="km-text">0000 KM</div>
-                    <p style="font-size: 10px; font-weight: bold; opacity: 0.5;">HI-SCORE: <span id="hi-text">0</span> KM</p>
-                </div>
-
-                <div id="game-overlay" class="game-overlay-screen">
-                    <h2 style="font-family: var(--font-h); color: var(--neon-red); font-size: 30px;">ENGINE OFFLINE</h2>
-                    <p style="margin-top: 15px; font-weight: bold; letter-spacing: 1px;">CLIQUE PARA DAR A PARTIDA NA TITAN</p>
-                    <div style="margin-top: 20px; font-size: 12px; opacity: 0.4;">USE O CLIQUE/TOQUE PARA PULAR OS OBSTÁCULOS</div>
-                </div>
-
-                <div id="road-layer" class="road-system"></div>
-                <div id="pilot-sprite">🏍️</div>
-                <div id="hazard-sprite" style="position: absolute; bottom: 40px; right: -100px; font-size: 50px;">🚧</div>
-            </div>
-        </main>
-
-        <div class="bento-card card-md">
-            <h3 style="margin-bottom: 20px; font-family: var(--font-h); font-size: 14px;">CONNECT SYSTEMS</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="btn-action ig-btn">
-                    <i class="fab fa-instagram"></i> INSTAGRAM
-                </a>
-                <a href="https://wa.me/5569992919920" target="_blank" class="btn-action wa-btn">
-                    <i class="fab fa-whatsapp"></i> WHATSAPP
-                </a>
+<div class="hub-container">
+    
+    <header class="bento-item profile-hero">
+        <div class="avatar-wrapper">
+            <div class="avatar-frame"></div>
+            <img src="20260207_132012[1].jpg" class="avatar-img" alt="Charlys">
+        </div>
+        <div class="hero-text">
+            <p style="color: var(--primary); font-weight: 700; letter-spacing: 5px;">OFFICIAL PROFILE</p>
+            <h1>CHARLYS</h1>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <span style="background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 10px; font-size: 12px;">TITAN 98</span>
+                <span style="background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 10px; font-size: 12px;">GTA V</span>
+                <span style="background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 10px; font-size: 12px;">ETS 2</span>
             </div>
         </div>
+    </header>
 
-        <div class="bento-card card-sm coffee-btn" onclick="addFuel()">
-            <span style="font-size: 40px;">☕</span>
-            <span class="stat-val" id="fuel-count">0</span>
-            <p style="font-size: 10px; font-weight: 900; opacity: 0.7;">COFFEE FUEL</p>
+    <section class="bento-item game-console" id="game-click-area">
+        <div id="game-viewport">
+            <div class="hud-top">
+                <div class="km-badge"><span id="live-score">0000</span> <small style="font-size: 10px;">KM</small></div>
+                <div style="text-align: right;">
+                    <p style="font-size: 10px; opacity: 0.5;">BEST RECORD</p>
+                    <p id="best-score" style="font-family: var(--font-head); color: var(--secondary);">0</p>
+                </div>
+            </div>
+
+            <div id="msg-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <h2 style="font-family: var(--font-head); color: var(--primary);">IGNITION OFF</h2>
+                <p style="margin-top: 10px; opacity: 0.6;">CLIQUE PARA ACELERAR A MÁQUINA</p>
+            </div>
+
+            <div id="road" class="road-anim"></div>
+            <div id="pilot">🏍️</div>
+            <div id="obs" class="obstacle">🚧</div>
         </div>
+    </section>
 
-        <div class="bento-card card-sm">
-            <i class="fas fa-trophy" style="color: gold; font-size: 30px;"></i>
-            <span class="stat-val" style="font-size: 24px;" id="rank-name">NOOB</span>
-            <p style="font-size: 10px; font-weight: 900; opacity: 0.5;">PILOT RANK</p>
-        </div>
-
+    <div class="bento-item social-grid">
+        <a href="https://instagram.com/inimigo_do_amigo.ofc" target="_blank" class="action-btn btn-insta" onclick="toast('Sistema Conectado ao Instagram')">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://wa.me/5569992919920" target="_blank" class="action-btn btn-whats" onclick="toast('WhatsApp Iniciado')">
+            <i class="fab fa-whatsapp"></i>
+        </a>
     </div>
 
-    <script>
-        /**
-         * GLOBAL ENGINE SETTINGS
-         */
-        const state = {
-            gameActive: false,
-            score: 0,
-            highScore: localStorage.getItem('charlys_pro_hi') || 0,
-            coffee: parseInt(localStorage.getItem('charlys_coffee')) || 0,
-            playerY: 0,
-            jumpVel: 0,
-            isJumping: false,
-            hazardX: -100,
-            gameSpeed: 10,
-            gravity: 1.2,
-            jumpPower: -22
-        };
+    <div class="bento-item stat-card" style="grid-column: span 1; cursor: pointer;" onclick="addCoffee()">
+        <span style="font-size: 40px;">☕</span>
+        <div class="stat-num" id="coffee-val">0</div>
+        <div class="stat-label">Caffeine Level</div>
+    </div>
 
-        // DOM Elements
-        const el = {
-            bg: document.getElementById('render-bg'),
-            pilot: document.getElementById('pilot-sprite'),
-            hazard: document.getElementById('hazard-sprite'),
-            km: document.getElementById('km-text'),
-            hi: document.getElementById('hi-text'),
-            overlay: document.getElementById('game-overlay'),
-            trigger: document.getElementById('game-trigger'),
-            road: document.getElementById('road-layer'),
-            fuel: document.getElementById('fuel-count'),
-            rank: document.getElementById('rank-name')
-        };
+    <div class="bento-item stat-card" style="grid-column: span 1;">
+        <i class="fas fa-bolt" style="font-size: 30px; color: var(--accent); margin-bottom: 10px;"></i>
+        <div class="stat-num" style="font-size: 20px; color: #fff;" id="rank-text">RECRUTA</div>
+        <div class="stat-label">Driver Rank</div>
+    </div>
 
-        el.hi.innerText = state.highScore;
-        el.fuel.innerText = state.coffee;
+</div>
 
-        /**
-         * BACKGROUND ENGINE - STARFIELD 3D
-         */
-        const ctx = el.bg.getContext('2d');
-        let particles = [];
+<script>
+    /**
+     * MASTER ENGINE CONTROLLER
+     */
+    const sys = {
+        active: false,
+        score: 0,
+        hi: localStorage.getItem('ultra_hi') || 0,
+        coffees: localStorage.getItem('ultra_coffee') || 0,
+        py: 0, pVel: 0, 
+        isJumping: false,
+        ox: -150,
+        speed: 12,
+        gravity: 1.5,
+        jump: -25
+    };
 
-        function initStars() {
-            el.bg.width = window.innerWidth;
-            el.bg.height = window.innerHeight;
-            particles = [];
-            for(let i=0; i<150; i++) {
-                particles.push({
-                    x: Math.random() * el.bg.width,
-                    y: Math.random() * el.bg.height,
-                    z: Math.random() * el.bg.width,
-                    size: Math.random() * 2
-                });
-            }
-        }
+    const dom = {
+        pilot: document.getElementById('pilot'),
+        obs: document.getElementById('obs'),
+        road: document.getElementById('road'),
+        score: document.getElementById('live-score'),
+        best: document.getElementById('best-score'),
+        overlay: document.getElementById('msg-overlay'),
+        area: document.getElementById('game-click-area'),
+        coffee: document.getElementById('coffee-val'),
+        rank: document.getElementById('rank-text'),
+        notify: document.getElementById('notify'),
+        canvas: document.getElementById('core-canvas')
+    };
 
-        function drawStars() {
-            ctx.fillStyle = '#050505';
-            ctx.fillRect(0,0,el.bg.width, el.bg.height);
-            
-            particles.forEach(p => {
-                let x = (p.x - el.bg.width/2) * (el.bg.width/p.z) + el.bg.width/2;
-                let y = (p.y - el.bg.height/2) * (el.bg.width/p.z) + el.bg.height/2;
-                let s = p.size * (el.bg.width/p.z);
-                
-                ctx.fillStyle = `rgba(255,255,255,${1 - p.z/el.bg.width})`;
-                ctx.beginPath();
-                ctx.arc(x, y, s, 0, Math.PI*2);
-                ctx.fill();
-                
-                p.z -= 5;
-                if(p.z <= 0) p.z = el.bg.width;
+    // Initialize State
+    dom.best.innerText = sys.hi;
+    dom.coffee.innerText = sys.coffees;
+
+    /**
+     * VISUAL ENGINE - STARFIELD & GRID
+     */
+    const ctx = dom.canvas.getContext('2d');
+    let stars = [];
+
+    function initVisuals() {
+        dom.canvas.width = window.innerWidth;
+        dom.canvas.height = window.innerHeight;
+        stars = [];
+        for(let i=0; i<200; i++) {
+            stars.push({
+                x: Math.random() * dom.canvas.width,
+                y: Math.random() * dom.canvas.height,
+                s: Math.random() * 2,
+                v: Math.random() * 2 + 0.5
             });
-            requestAnimationFrame(drawStars);
+        }
+    }
+
+    function render() {
+        ctx.fillStyle = '#020202';
+        ctx.fillRect(0,0,dom.canvas.width, dom.canvas.height);
+        
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        stars.forEach(s => {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.s, 0, Math.PI*2);
+            ctx.fill();
+            s.y += s.v;
+            if(s.y > dom.canvas.height) s.y = -10;
+        });
+        requestAnimationFrame(render);
+    }
+    window.addEventListener('resize', initVisuals);
+    initVisuals(); render();
+
+    /**
+     * TITAN ULTRA ENGINE
+     */
+    function update() {
+        if(!sys.active) return;
+
+        // Physics
+        sys.pVel += sys.gravity;
+        sys.py -= sys.pVel;
+        if(sys.py <= 0) { sys.py = 0; sys.pVel = 0; sys.isJumping = false; }
+        dom.pilot.style.transform = `translateY(${-sys.py}px) scaleX(-1)`;
+
+        // Obstacle Loop
+        sys.speed = 12 + (sys.score / 250);
+        sys.ox += sys.speed;
+        if(sys.ox > dom.area.offsetWidth + 150) {
+            sys.ox = -100;
+            sys.score += 10;
+            dom.score.innerText = sys.score.toString().padStart(4, '0');
+            checkMilestones();
+        }
+        dom.obs.style.right = sys.ox + 'px';
+
+        // Collision: Advanced Hitbox logic
+        let pRect = dom.pilot.getBoundingClientRect();
+        let oRect = dom.obs.getBoundingClientRect();
+
+        if (
+            pRect.left < oRect.right - 25 &&
+            pRect.right > oRect.left + 25 &&
+            pRect.bottom > oRect.top + 25
+        ) {
+            crash();
+            return;
         }
 
-        window.addEventListener('resize', initStars);
-        initStars(); drawStars();
+        dom.road.style.left = (-(Date.now() / 6) % 120) + 'px';
+        requestAnimationFrame(update);
+    }
 
-        /**
-         * GAME ENGINE - CORE LOOP
-         */
-        function gameLoop() {
-            if(!state.gameActive) return;
-
-            // FÍSICA DE PULO
-            if(state.isJumping) {
-                state.jumpVel += state.gravity;
-                state.playerY -= state.jumpVel;
-                
-                if(state.playerY <= 0) {
-                    state.playerY = 0;
-                    state.jumpVel = 0;
-                    state.isJumping = false;
-                }
-            }
-            el.pilot.style.transform = `translateY(${-state.playerY}px) scaleX(-1)`;
-
-            // OBSTÁCULOS E DIFICULDADE
-            state.gameSpeed = 10 + (state.score / 200);
-            state.hazardX += state.gameSpeed;
-            
-            if(state.hazardX > (el.trigger.offsetWidth + 100)) {
-                state.hazardX = -100;
-                state.score += 10;
-                updateUI();
-            }
-            el.hazard.style.right = state.hazardX + 'px';
-
-            // DETECÇÃO DE COLISÃO AABB PROFISSIONAL
-            // Convertemos coordenadas do container para hitbox relativa
-            const rectPilot = el.pilot.getBoundingClientRect();
-            const rectHazard = el.hazard.getBoundingClientRect();
-
-            if (
-                rectPilot.left < rectHazard.right - 20 &&
-                rectPilot.right > rectHazard.left + 20 &&
-                rectPilot.bottom > rectHazard.top + 20
-            ) {
-                gameOver();
-                return;
-            }
-
-            // ANIMAÇÃO DE CENÁRIO
-            el.road.style.left = (-(Date.now()/5) % 100) + 'px';
-
-            requestAnimationFrame(gameLoop);
+    function crash() {
+        sys.active = false;
+        if(sys.score > sys.hi) {
+            sys.hi = sys.score;
+            localStorage.setItem('ultra_hi', sys.hi);
+            toast('NOVO RECORDE ESTABELECIDO!');
         }
+        dom.best.innerText = sys.hi;
+        dom.overlay.style.display = 'flex';
+        dom.overlay.innerHTML = `
+            <h2 style="color:var(--primary); font-family:var(--font-head);">WASTED</h2>
+            <p style="font-size:30px;">${sys.score} KM</p>
+            <p style="opacity:0.5; font-size:12px;">TOQUE PARA REPARAR A TITAN</p>
+        `;
+    }
 
-        function updateUI() {
-            el.km.innerText = state.score.toString().padStart(4, '0') + " KM";
-            
-            // Evolução de Veículo
-            if(state.score >= 1000) {
-                el.pilot.innerText = '🚛';
-                el.rank.innerText = 'TRUCKER';
-                el.rank.style.color = 'var(--neon-blue)';
-            } else if(state.score >= 400) {
-                el.pilot.innerText = '🚀';
-                el.rank.innerText = 'PILOT';
-                el.rank.style.color = 'var(--neon-green)';
-            } else {
-                el.pilot.innerText = '🏍️';
-                el.rank.innerText = 'NOOB';
-            }
+    function checkMilestones() {
+        if(sys.score == 500) { toast('RANK UP: PILOTO EXPERIENTE'); dom.rank.innerText = 'PILOTO'; dom.pilot.innerText = '🚀'; }
+        if(sys.score == 1500) { toast('RANK UP: LENDA DAS PISTAS'); dom.rank.innerText = 'LENDA'; dom.pilot.innerText = '🚛'; }
+    }
+
+    dom.area.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if(!sys.active) {
+            sys.active = true;
+            sys.score = 0;
+            sys.ox = -150;
+            sys.py = 0;
+            dom.overlay.style.display = 'none';
+            dom.score.innerText = "0000";
+            update();
+        } else if(!sys.isJumping) {
+            sys.isJumping = true;
+            sys.pVel = sys.jump;
         }
+    });
 
-        function gameOver() {
-            state.gameActive = false;
-            if(state.score > state.highScore) {
-                state.highScore = state.score;
-                localStorage.setItem('charlys_pro_hi', state.highScore);
-            }
-            el.hi.innerText = state.highScore;
-            el.overlay.innerHTML = `<h2 style="color:var(--neon-red)">WASTED</h2><p style="font-size:24px">${state.score} KM</p><small>TOQUE PARA REPARAR A TITAN</small>`;
-            el.overlay.style.display = 'flex';
-        }
+    /**
+     * SYSTEMS
+     */
+    function addCoffee() {
+        sys.coffees++;
+        localStorage.setItem('ultra_coffee', sys.coffees);
+        dom.coffee.innerText = sys.coffees;
+        if(sys.coffees % 10 == 0) toast('NÍVEL DE CAFEÍNA CRÍTICO!');
+    }
 
-        function startGame() {
-            state.gameActive = true;
-            state.score = 0;
-            state.hazardX = -100;
-            state.playerY = 0;
-            el.overlay.style.display = 'none';
-            updateUI();
-            gameLoop();
-        }
+    function toast(txt) {
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.innerText = txt;
+        dom.notify.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
 
-        el.trigger.addEventListener('touchstart', handleAction);
-        el.trigger.addEventListener('mousedown', handleAction);
-
-        function handleAction(e) {
-            e.preventDefault();
-            if(!state.gameActive) startGame();
-            else if(!state.isJumping) {
-                state.isJumping = true;
-                state.jumpVel = state.jumpPower;
-            }
-        }
-
-        /**
-         * PROGRESSION SYSTEM
-         */
-        function addFuel() {
-            state.coffee++;
-            localStorage.setItem('charlys_coffee', state.coffee);
-            el.fuel.innerText = state.coffee;
-            
-            // Efeito visual de clique
-            el.fuel.style.transform = 'scale(1.5)';
-            setTimeout(() => el.fuel.style.transform = 'scale(1)', 100);
-        }
-
-    </script>
+</script>
 </body>
 </html>
